@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class CameraFollow : MonoBehaviour
 {
     public Transform target;
+    public string targetTag = "Player";
 
     public float distance = 7f;
     public float height = 3f;
@@ -17,7 +18,11 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
-        if (target == null) return;
+        if (target == null)
+        {
+            FindTarget();
+            return;
+        }
 
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
@@ -32,5 +37,27 @@ public class CameraFollow : MonoBehaviour
 
         transform.position = target.position + offset;
         transform.LookAt(target.position + Vector3.up * 1.5f);
+    }
+
+    void FindTarget()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag(targetTag);
+
+        foreach (GameObject player in players)
+        {
+            Photon.Pun.PhotonView pv = player.GetComponent<Photon.Pun.PhotonView>();
+
+            if (pv != null && pv.IsMine)
+            {
+                PlayerMove pl = player.GetComponent<PlayerMove>();
+
+                if (pl != null)
+                {
+                    pl.cameraTransform = transform;
+                    target = player.transform;
+                    break;
+                }
+            }
+        }
     }
 }
