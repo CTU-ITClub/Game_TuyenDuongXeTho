@@ -7,15 +7,12 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-<<<<<<< HEAD
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
       "dependencies": {}
     },
-=======
->>>>>>> b522a2d7c29611c786f9ef154aed8931b583fa94
     "com.unity.ai.navigation": {
       "version": "2.0.11",
       "depth": 0,
