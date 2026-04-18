@@ -11,5 +11,9 @@ AssetOrigin:
   productId: 191449
   packageName: Simple Water Shader URP
   packageVersion: 1.0.0
+<<<<<<< HEAD
+  assetPath: Assets/ThirdParty/IgniteCoders/Simple Water Shader/Info/Readme.asset
+=======
   assetPath: Assets/IgniteCoders/Simple Water Shader/Info/Readme.asset
+>>>>>>> b522a2d7c29611c786f9ef154aed8931b583fa94
   uploadId: 422776

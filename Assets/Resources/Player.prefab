@@ -18,7 +18,11 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
+<<<<<<< HEAD
+  m_IsActive: 0
+=======
   m_IsActive: 1
+>>>>>>> b522a2d7c29611c786f9ef154aed8931b583fa94
 --- !u!4 &8941585642548810673
 Transform:
   m_ObjectHideFlags: 0
@@ -132,7 +136,11 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
+<<<<<<< HEAD
+  m_IsActive: 0
+=======
   m_IsActive: 1
+>>>>>>> b522a2d7c29611c786f9ef154aed8931b583fa94
 --- !u!4 &8444042579338270598
 Transform:
   m_ObjectHideFlags: 0
@@ -322,7 +330,11 @@ MonoBehaviour:
   moveForce: 40
   maxSpeed: 8
   drag: 0.3
+<<<<<<< HEAD
+  rotateSpeed: 2
+=======
   rotateSpeed: 10
+>>>>>>> b522a2d7c29611c786f9ef154aed8931b583fa94
   cameraTransform: {fileID: 0}
 --- !u!114 &3083639368447478938
 MonoBehaviour:

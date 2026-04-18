@@ -11,10 +11,17 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
+<<<<<<< HEAD
+  - Tree
+  - Water
+  - UI
+  - Environments
+=======
   - 
   - Water
   - UI
   - 
+>>>>>>> b522a2d7c29611c786f9ef154aed8931b583fa94
   - 
   - 
   - 
