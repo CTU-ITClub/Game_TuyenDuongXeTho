@@ -2040,10 +2040,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
   player:
-  - {fileID: 9208631583605028274, guid: c2f928caf438bc14b94fa853c672fca7, type: 3}
-  - {fileID: 9208631583605028274, guid: c2f928caf438bc14b94fa853c672fca7, type: 3}
-  - {fileID: 9208631583605028274, guid: c2f928caf438bc14b94fa853c672fca7, type: 3}
-  - {fileID: 9208631583605028274, guid: c2f928caf438bc14b94fa853c672fca7, type: 3}
+  - {fileID: 9208631583605028274, guid: 6a8385efb8084f14b987684a292f5c61, type: 3}
+  - {fileID: 9208631583605028274, guid: 6a8385efb8084f14b987684a292f5c61, type: 3}
+  - {fileID: 9208631583605028274, guid: 6a8385efb8084f14b987684a292f5c61, type: 3}
+  - {fileID: 9208631583605028274, guid: 6a8385efb8084f14b987684a292f5c61, type: 3}
   spawnPoint:
   - {fileID: 679188841}
   - {fileID: 759342691}
