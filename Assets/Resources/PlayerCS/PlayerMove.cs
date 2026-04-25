@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
-using Photon.Pun;
+using Photon.Pun; 
 using System.Collections;
 
 public class PlayerMove : MonoBehaviour
