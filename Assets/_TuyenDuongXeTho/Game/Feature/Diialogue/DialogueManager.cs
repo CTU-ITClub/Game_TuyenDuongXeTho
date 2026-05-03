@@ -1,4 +1,4 @@
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 using UnityEngine;
 using System.Text; 
 using System.Collections;
@@ -21,7 +21,7 @@ public class DialogueManager : MonoBehaviour
     private Queue<DialogueLine> lines;
     public bool isDialogueActive = false;
     private bool isTyping = false;
-    private string currentFullSentence = "";
+    private string currentFullSentence = "";    // Biến lưu câu thoại đầy đủ hiện tại 
 
     private void Awake()
     {
@@ -35,6 +35,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (isDialogueActive && Input.GetKeyDown(KeyCode.Space))
         {
+            // Sử dụng phím "Space" để next
             DisplayNextDialogueLine();
         }
     }
@@ -45,12 +46,15 @@ public class DialogueManager : MonoBehaviour
 
         dialoguePanel.SetActive(true);
 
+        // Xóa hàng đợi trước khi thêm các dòng thoại mới
         lines.Clear();
         foreach (DialogueLine dialogueLine in dialogue.dialogueLines)
         {
+            // Thêm các dòng thoại từ dialogue vào hàng đợi lines
             lines.Enqueue(dialogueLine);
         }
 
+        // Hiển thị dòng thoại đầu tiên
         DisplayNextDialogueLine();
     }
 
@@ -58,6 +62,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (isTyping)
         {
+            // Nếu đang dang dở câu thoại trước => bỏ qua hiệu ứng gõ chữ và hiển thị toàn bộ câu thoại ngay lập tức
             StopAllCoroutines();
             dialogueArea.text = currentFullSentence;
             isTyping = false;
@@ -66,10 +71,11 @@ public class DialogueManager : MonoBehaviour
 
         if (lines.Count == 0)
         {
+            // Nếu không còn dòng thoại nào trong hàng đợi => kết thúc cuộc hội thoại
             EndDialogue();
             return;
         }
-
+        // Lấy dòng thoại tiếp theo từ hàng đợi và hiển thị
         DialogueLine currentLine = lines.Dequeue();
         characterIcon.sprite = currentLine.character.icon;
         characterName.text = currentLine.character.name;
@@ -80,6 +86,7 @@ public class DialogueManager : MonoBehaviour
 
     IEnumerator TypeSentence(string sentence)
     {
+        // Hiển thị từng chữ một với hiệu ứng gõ chữ
         isTyping = true;
         dialogueArea.text = "";
         StringBuilder sb = new StringBuilder();
