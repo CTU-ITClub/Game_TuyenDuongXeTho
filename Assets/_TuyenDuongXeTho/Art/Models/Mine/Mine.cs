@@ -18,12 +18,15 @@ public class Mine : MonoBehaviour
 
         Debug.Log(gameObject.name + " đã nổ!");
 
+        // Tách particle khỏi mine để độc lập
         if (particle != null)
         {
             particle.transform.SetParent(null); 
             particle.Play();
         }
 
+        // Tìm tất cả các mine khác trong phạm vi và kích hoạt chúng => hiệu ứng dây chuyền
+        // Chỉ tìm các collider có layer giá trị mineLayer
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius, mineLayer);
         foreach (Collider hitCollider in hitColliders)
         {
