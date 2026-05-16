@@ -1,0 +1,265 @@
+fileFormatVersion: 2
+guid: a81d758765ad62541ad49fbbe6ab79ea
+ModelImporter:
+  serializedVersion: 24200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Box02-FACES
+    second: {fileID: 2100000, guid: 511a8e75425f2254c820b8d3748c1d80, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Box80-FACES
+    second: {fileID: 2100000, guid: d8f3fe37b90b5ef4ba58f465f4a5fa78, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cylinder02-FACES
+    second: {fileID: 2100000, guid: 93a6dd6a58cbe4e4a9a8846fd6b3a1f0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cylinder03-FACES
+    second: {fileID: 2100000, guid: 6058341ef6ad507449a5df5da4658cc6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cylinder05-FACES
+    second: {fileID: 2100000, guid: 61acb5c12fd2916439fbc8dca9422778, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cylinder07-FACES
+    second: {fileID: 2100000, guid: 3ebcf0cfbfe4ae34381c6ca95a30c3f9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cylinder10-FACES
+    second: {fileID: 2100000, guid: ea1b48cf0cf013e48a98130ffb4d2c2f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cylinder21_0-FACES
+    second: {fileID: 2100000, guid: 8a903f32ef7ff604c8674e707079ac4c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cylinder27_0-FACES
+    second: {fileID: 2100000, guid: 27851b751775fc14bb9bdfd55875328e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line01-FACES
+    second: {fileID: 2100000, guid: 5a66e097390223b498948c58892e404d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line02-FACES
+    second: {fileID: 2100000, guid: e67fd8d9c3426b44faaca75020f36b02, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line03-FACES
+    second: {fileID: 2100000, guid: c94bb5b9c92b89c468d5b868514f9656, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line05-FACES
+    second: {fileID: 2100000, guid: 9428d723e3aa2aa4b8048ea761cfdc0a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line08-FACES
+    second: {fileID: 2100000, guid: ff745ee0b5b23fe478702b3698ebfbea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line11-FACES
+    second: {fileID: 2100000, guid: 751a41a9b1188b94dad9b9126a4d93d6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line11-FACES_0
+    second: {fileID: 2100000, guid: 5de97817450837949bcaeb1b281e1936, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line11_0-FACES
+    second: {fileID: 2100000, guid: 957f9a6684c4fff4283b7fc053296444, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line201-FACES
+    second: {fileID: 2100000, guid: ce42737580b2ffc4f9700e2419f8410b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line201-FACES_0
+    second: {fileID: 2100000, guid: 92bf701b5dcd6d64bb4901007d902bd9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line22-FACES
+    second: {fileID: 2100000, guid: 1a8be9489347df24691f337e50f7635c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Object01-FACES
+    second: {fileID: 2100000, guid: 30e2b35b6d517074b85b752147aa2b15, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sphere01-FACES
+    second: {fileID: 2100000, guid: ebca08a4cd03cd64e9baae5a942d4cc5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sphere02-FACES
+    second: {fileID: 2100000, guid: 8125caf610b6b914e8846e40161b5514, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Torus01-FACES
+    second: {fileID: 2100000, guid: ee7776dc71aecb64386d349351f4187a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tube01-FACES
+    second: {fileID: 2100000, guid: 2d8b07668b306f043b3c4d610dafa7bc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tube04-FACES
+    second: {fileID: 2100000, guid: a4cf4051f73044b4cbe3691a97e1503e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: fuzel_24-FACES
+    second: {fileID: 2100000, guid: 9290dcf5e52b9cc409efe12617e1332d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: fuzel_24-FACES_0
+    second: {fileID: 2100000, guid: 45e55c557f438554cb4c04d8d306522a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: stvorka_glavn03-FACES
+    second: {fileID: 2100000, guid: cc3c296be0282d14d9ee7162241adfaa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: stvorka_glavn04-FACES
+    second: {fileID: 2100000, guid: bb8e4e7415279e646885a0e22dddb1b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: stvorka_nos-FACES
+    second: {fileID: 2100000, guid: dcbc49e7451fff644b4361c14355f0f4, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
