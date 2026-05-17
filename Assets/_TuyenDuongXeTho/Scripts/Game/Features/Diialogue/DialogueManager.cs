@@ -43,7 +43,7 @@ public class DialogueManager : MonoBehaviour
 
     private void Update()
     {
-        if (isDialogueActive && Input.GetKeyDown(KeyCode.Space))
+        if (isDialogueActive && Input.GetKeyDown(KeyCode.N))
         {
             DisplayNextDialogueLine();
         }
@@ -103,7 +103,9 @@ public class DialogueManager : MonoBehaviour
 
         DialogueLine currentLine = lines.Dequeue();
 
-        characterIcon.sprite = currentLine.character.icon;
+        if (characterIcon != null)
+            characterIcon.sprite = currentLine.character.icon;
+
         characterName.text = currentLine.character.name;
 
         currentFullSentence = currentLine.line;

@@ -25,7 +25,6 @@ public class Plane_Boom : MonoBehaviour
 
     void Start()
     {
-        // Lấy PhotonView từ script này hoặc từ đối tượng Plane
         pv = GetComponent<PhotonView>();
         if (pv == null && plane != null)
         {
@@ -86,12 +85,12 @@ public class Plane_Boom : MonoBehaviour
     void MovePlane()
     {
         if (movePoints == null || movePoints.Length == 0) return;
-
+        // Xử lí di chuyển đến các điếm
         Transform targetPoint = movePoints[currentPointIndex];
         Vector3 direction = targetPoint.position - plane.transform.position;
 
         plane.transform.position = Vector3.MoveTowards(plane.transform.position, targetPoint.position, moveSpeed * Time.deltaTime);
-
+        // Xử lí hướng xoay qua các điểm
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
