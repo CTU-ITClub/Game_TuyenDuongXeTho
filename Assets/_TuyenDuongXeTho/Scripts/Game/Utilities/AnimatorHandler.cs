@@ -34,5 +34,20 @@ namespace VGDSystem.Animation
                 _crossFadeDuration
             );
         }
+
+        public void EnableAnimator()
+        {
+            if (_animator == null) return;
+
+            _animator.enabled = true;
+        }
+
+        public void DisableAnimator()
+        {
+            if (_animator == null) return;
+
+            _animator.enabled = false;
+
+        }
     }
 }

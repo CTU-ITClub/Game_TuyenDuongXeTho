@@ -50,6 +50,10 @@ MonoBehaviour:
   - RPC_SetSteerInput
   - RPC_SpawnBoom
   - RPC_StartPlaneMove
+  - RPC_SetAnimatorState
+  - RPC_SyncRagdollState
+  - RPC_SetRagdollState
+  - RPC_TriggerDeathRagdollWithForce
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

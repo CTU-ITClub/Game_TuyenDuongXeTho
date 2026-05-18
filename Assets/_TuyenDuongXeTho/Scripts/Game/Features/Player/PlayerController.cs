@@ -8,10 +8,9 @@ using TMPro;
 
 namespace Game.Features.Player
 {
-    [RequireComponent(typeof(CharacterController),typeof(AnimatorHandler))]
+    [RequireComponent(typeof(CharacterController), typeof(AnimatorHandler))]
     public class PlayerController : MonoBehaviour
     {
-
         private const float GRAVITY_STICK_FORCE = -2f;
         private const float TERMINAL_VELOCITY = -50f;
 
@@ -42,6 +41,10 @@ namespace Game.Features.Player
         [Tooltip("Kéo Object chứa script input tùy hệ điều hành")]
         [SerializeField] private GameObject _inputProvider;
 
+        [Header("--- Ragdoll Settings ---")]
+        [Tooltip("Kéo xương hông (mixamorig:Hips) vào đây để đồng bộ vị trí khi đứng dậy")]
+        [SerializeField] private Transform _ragdollHips;
+
         #endregion
 
         #region Private Property
@@ -52,10 +55,10 @@ namespace Game.Features.Player
         private float _jumpBufferCounter;
         private bool _hasJumped;
         private bool IsGrounded => Physics.CheckSphere(
-    transform.position + _groundCheckOffset,
-    _groundCheckRadius,
-    _groundLayer
-);
+            transform.position + _groundCheckOffset,
+            _groundCheckRadius,
+            _groundLayer
+        );
         #endregion
 
         #region Components & Interfaces
@@ -87,10 +90,16 @@ namespace Game.Features.Player
 
         PhotonView pv;
         public TextMeshProUGUI interactBut;
+        bool CanMove = true;
+
+        #region Ragdoll Private Fields
+        private Rigidbody[] _ragdollRigidbodies;
+        private Collider[] _ragdollColliders;
+        #endregion
 
         private void Awake()
         {
-            pv = GetComponent<PhotonView>(); 
+            pv = GetComponent<PhotonView>();
             _controller = GetComponent<CharacterController>();
             _animator = GetComponent<AnimatorHandler>();
             if (_inputProvider != null)
@@ -117,6 +126,7 @@ namespace Game.Features.Player
             }
 
             InitializeStates();
+            SetupRagdollComponents();
         }
 
         private void Start()
@@ -138,6 +148,8 @@ namespace Game.Features.Player
             if (!pv.IsMine) return;
             if (_movementInput == null) return;
 
+            if (!CanMove) return;
+
             HandleInput();
             HandleInteraction();
 
@@ -148,6 +160,8 @@ namespace Game.Features.Player
         {
             if (!pv.IsMine) return;
 
+            if (!CanMove) return;
+
             _currentState?.FixedUpdate();
         }
 
@@ -155,8 +169,6 @@ namespace Game.Features.Player
         private void HandleInput()
         {
             _currentInput = _movementInput.GetMovementVector();
-
-            Debug.Log(_currentInput);
 
             if (_movementInput.JumpKeyPressed())
             {
@@ -332,16 +344,26 @@ namespace Game.Features.Player
 
         public void ChangeNotice(string message)
         {
-            interactBut.text = message;
+            if (interactBut != null)
+                interactBut.text = message;
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!CanMove) return; // Không tương tác xe khi đang ngã Ragdoll
             if (other.TryGetComponent(out IVehicleable vehicle))
             {
                 _targetVehicleSlot = vehicle;
-                // hét lên là có player lại gần slot bằng observer, UI và những thag khác tự đăng ký lắng nghe
                 ChangeNotice("PRESS E");
+            }
+            // --- Logic Bị Trúng Bom ---
+            if (pv.IsMine && other.CompareTag("Bomb"))
+            {
+                float lucNay = 15f;      // Tăng số này lên nếu muốn bay xa/mạnh hơn (Ví dụ: 15f, 20f, 25f...)
+                float banKinhNo = 5f;    // Bán kính ảnh hưởng của quả bom
+
+                // Gọi hàm kích hoạt ngã Ragdoll có kèm lực đẩy từ vị trí quả bom
+                StartRagdollWithBomb(other.transform.position, lucNay, banKinhNo);
             }
         }
 
@@ -350,9 +372,68 @@ namespace Game.Features.Player
             if (other.TryGetComponent(out IVehicleable vehicle) && vehicle == _targetVehicleSlot)
             {
                 _targetVehicleSlot = null;
-                // hét lên là có player lại rời xa slot bằng observer, UI và những thag khác tự đăng ký lắng nghe
                 ChangeNotice("");
             }
         }
+
+        #region Ragdoll Pure-Trigger Synchronization With Forces
+
+        private void SetupRagdollComponents()
+        {
+            Transform mixamoRoot = transform.Find("Root/mixamorig:Hips");
+            Transform searchRoot = mixamoRoot != null ? mixamoRoot : transform;
+
+            _ragdollRigidbodies = searchRoot.GetComponentsInChildren<Rigidbody>();
+            _ragdollColliders = searchRoot.GetComponentsInChildren<Collider>();
+
+            SetRagdollPhysicsActive(false);
+        }
+
+        private void SetRagdollPhysicsActive(bool active)
+        {
+            if (_ragdollRigidbodies == null) return;
+
+            foreach (var rb in _ragdollRigidbodies)
+            {
+                rb.isKinematic = !active;
+            }
+
+            foreach (var col in _ragdollColliders)
+            {
+                if (!col.isTrigger)
+                    col.enabled = active;
+            }
+        }
+
+        /// <summary>
+        /// Gọi hàm này khi trúng bom, truyền vào vị trí quả bom để tính lực văng
+        /// </summary>
+        public void StartRagdollWithBomb(Vector3 bombPosition, float explosionForce, float explosionRadius)
+        {
+            // Gửi RPC kèm theo thông tin vị trí quả bom và sức nổ cho cả phòng
+            pv.RPC(nameof(RPC_TriggerDeathRagdollWithForce), RpcTarget.All, bombPosition, explosionForce, explosionRadius);
+        }
+
+        [PunRPC]
+        private void RPC_TriggerDeathRagdollWithForce(Vector3 bombPos, float force, float radius)
+        {
+            CanMove = false;
+            _controller.enabled = false;
+            _animator.DisableAnimator();
+
+            // 1. Kích hoạt vật lý cho xương trước
+            SetRagdollPhysicsActive(true);
+
+            // 2. Tác dụng lực nổ vào TẤT CẢ các đốt xương để tăng lực nảy văng ra ngoài
+            if (_ragdollRigidbodies != null)
+            {
+                foreach (var rb in _ragdollRigidbodies)
+                {
+                    // Tham số thứ 4 (ví dụ: 1f hoặc 2f) giúp hất nhân vật nẩy bổng lên trên trục Y
+                    rb.AddExplosionForce(force, bombPos, radius, 3f, ForceMode.Impulse);
+                }
+            }
+        }
+        #endregion
     }
 }

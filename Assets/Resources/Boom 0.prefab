@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3251680219999975864}
   m_Layer: 0
   m_Name: Boom 0
-  m_TagString: Untagged
+  m_TagString: Bomb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -144,6 +144,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 5307609927135401769}
+  - {fileID: 3251680219999975864}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
