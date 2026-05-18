@@ -4,6 +4,8 @@ using Game.Features.CameraSystem;
 using Photon.Pun;
 using VGDSystem.Animation;
 using Core.Constains;
+using TMPro;
+
 namespace Game.Features.Player
 {
     [RequireComponent(typeof(CharacterController),typeof(AnimatorHandler))]
@@ -84,6 +86,7 @@ namespace Game.Features.Player
         #endregion
 
         PhotonView pv;
+        public TextMeshProUGUI interactBut;
 
         private void Awake()
         {
@@ -186,6 +189,8 @@ namespace Game.Features.Player
             _targetVehicleSlot = slot;
 
             slot.OnInteractEnter(this);
+
+            ChangeNotice("Press F to Exit");
         }
 
         //xuống xe
@@ -196,6 +201,8 @@ namespace Game.Features.Player
                 _targetVehicleSlot.OnInteractExit();
                 _targetVehicleSlot = null;
             }
+
+            ChangeNotice("");
         }
 
         public void ChangeState(IPlayerState state)
@@ -323,6 +330,10 @@ namespace Game.Features.Player
             }
         }
 
+        public void ChangeNotice(string message)
+        {
+            interactBut.text = message;
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -330,6 +341,7 @@ namespace Game.Features.Player
             {
                 _targetVehicleSlot = vehicle;
                 // hét lên là có player lại gần slot bằng observer, UI và những thag khác tự đăng ký lắng nghe
+                ChangeNotice("PRESS E");
             }
         }
 
@@ -339,6 +351,7 @@ namespace Game.Features.Player
             {
                 _targetVehicleSlot = null;
                 // hét lên là có player lại rời xa slot bằng observer, UI và những thag khác tự đăng ký lắng nghe
+                ChangeNotice("");
             }
         }
     }

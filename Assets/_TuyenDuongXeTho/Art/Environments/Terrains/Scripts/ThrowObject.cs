@@ -16,15 +16,6 @@ public class BezierThrow : MonoBehaviour
 
     public Animator animator;
 
-    void Update()
-    {
-        // Phím Space để test ném
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Throw();
-        }
-    }
-
     public void Throw()
     {
         if (isThrown) return; 

@@ -9843,7 +9843,7 @@ MonoBehaviour:
   radius: 10
   boomCount: 5
   throwTimeDelay: 3
-  plane: {fileID: 4504597774428605186}
+  plane: {fileID: 1273360431469473112}
   movePoints:
   - {fileID: 213945094639188027}
   - {fileID: 808941300353562799}
@@ -9888,7 +9888,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents:
   - {fileID: 5505618287533616230}
@@ -9910,7 +9910,7 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
-  m_UseLocal: 1
+  m_UseLocal: 0
 --- !u!1 &1279107581628559374
 GameObject:
   m_ObjectHideFlags: 0
@@ -35322,7 +35322,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1270802719707803956
 Transform:
   m_ObjectHideFlags: 0
