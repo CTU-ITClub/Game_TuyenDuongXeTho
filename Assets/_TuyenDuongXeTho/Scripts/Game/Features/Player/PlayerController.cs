@@ -344,6 +344,8 @@ namespace Game.Features.Player
 
         public void ChangeNotice(string message)
         {
+            if (!pv.IsMine) return;
+
             if (interactBut != null)
                 interactBut.text = message;
         }
