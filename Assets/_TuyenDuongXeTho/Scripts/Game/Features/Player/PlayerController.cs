@@ -154,6 +154,12 @@ namespace Game.Features.Player
             HandleInteraction();
 
             _currentState?.Update();
+
+            //Test Ragdoll 
+            if (pv.IsMine && Input.GetKeyDown(KeyCode.P))
+            {
+                StartRagdollWithBomb(transform.position, 15f, 5f);
+            }
         }
 
         private void FixedUpdate()

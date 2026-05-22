@@ -2451,7 +2451,7 @@ MonoBehaviour:
   _switchViewKey: 118
   _interactKey: 101
   _exitKey: 102
-  _invertYAxis: 0
+  _invertYAxis: 1
 --- !u!1 &6870719974021223291
 GameObject:
   m_ObjectHideFlags: 0
