@@ -2731,8 +2731,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 764878028059380232}
   - {fileID: 1749241900817355579}
+  - {fileID: 764878028059380232}
   - {fileID: 1819259751681472711}
   m_Father: {fileID: 4369732339817238835}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3005,6 +3005,8 @@ MonoBehaviour:
   roomManager: {fileID: 0}
   contain: {fileID: 9033217148315805093}
   roomListPrefab: {fileID: 2837106921160819658, guid: fe7d8a8f21955624b9e5c30dd141ce8d, type: 3}
+  maxPlayerSet: 0
+  cursorLocked: 0
 --- !u!1 &8541705781795919737
 GameObject:
   m_ObjectHideFlags: 0

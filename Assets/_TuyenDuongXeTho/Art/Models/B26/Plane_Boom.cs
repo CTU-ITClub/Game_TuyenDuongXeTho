@@ -1,170 +1,336 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Photon.Pun;
 
-public class Plane_Boom : MonoBehaviour
+public class Plane_Boom : MonoBehaviourPun
 {
-    [Header("Settings")]
-    public GameObject boomPrefab; // Phải được lưu trong thư mục Resources nếu dùng PhotonNetwork.Instantiate, hoặc giữ nguyên nếu dùng RPC
-    public float radius = 10f;
-    public int boomCount = 5;
-    public float throwTimeDelay = 3f;
+    [Header("Boom Settings")]
+    [SerializeField] private GameObject boomPrefab;
+    [SerializeField] private int boomCount = 5;
+    [SerializeField] private float throwTimeDelay = 3f;
 
-    [Header("Movement")]
-    public GameObject plane;
+    [Header("Bomb Area Points")]
+    [SerializeField] private List<Transform> areaPoints = new();
+    public int distanceEachBomb = 5;
 
-    public Transform[] movePoints;
-    public float moveSpeed = 5f;
-    public float rotationSpeed = 10f;
-
-    private int currentPointIndex = 0;
-    private bool isDead = false;
-    private bool isMove = false;
+    [Header("Plane Movement")]
+    [SerializeField] private GameObject plane;
+    [SerializeField] private List<Transform> movePoints = new();
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private float reachDistance = 0.2f;
 
     private PhotonView pv;
 
-    void Start()
+    private bool isDead = false;
+    private bool isMove = false;
+
+    private Coroutine throwCoroutine;
+
+    private int currentMoveIndex = 0;
+
+    private void Awake()
     {
         pv = GetComponent<PhotonView>();
-        if (pv == null && plane != null)
-        {
-            pv = plane.GetComponent<PhotonView>();
-        }
 
-        // Chỉ có Máy chủ (Host/MasterClient) mới chạy bộ đếm thời gian thả bom và tính toán đường đi
-        if (PhotonNetwork.IsMasterClient)
+        if (pv == null)
         {
-            StartCoroutine(WaitToThrow());
+            pv = gameObject.AddComponent<PhotonView>();
         }
     }
 
-    void Update()
+    private void Start()
     {
-        // Chỉ MasterClient xử lý việc di chuyển máy bay, vị trí sẽ tự đồng bộ qua PhotonTransformView
-        if (PhotonNetwork.IsMasterClient && isMove && !isDead && plane != null)
+        if (plane != null)
         {
-            MovePlane();
+            plane.SetActive(false);
         }
     }
 
-    IEnumerator WaitToThrow()
+    private void Update()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (isDead) return;
+        if (!isMove) return;
+        if (plane == null) return;
+
+        MovePlane();
+    }
+
+    #region Plane Movement
+
+    private void MovePlane()
+    {
+        if (movePoints == null || movePoints.Count == 0)
+            return;
+
+        Transform targetPoint = movePoints[currentMoveIndex];
+
+        if (targetPoint == null)
+            return;
+
+        Vector3 targetPos = targetPoint.position;
+
+        // Move
+        plane.transform.position = Vector3.MoveTowards(
+            plane.transform.position,
+            targetPos,
+            moveSpeed * Time.deltaTime
+        );
+
+        // Rotate
+        Vector3 direction = targetPos - plane.transform.position;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+            plane.transform.rotation = Quaternion.Slerp(
+                plane.transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
+        }
+
+        // Reached point
+        float distance = Vector3.Distance(
+            plane.transform.position,
+            targetPos
+        );
+
+        if (distance <= reachDistance)
+        {
+            currentMoveIndex++;
+
+            // Loop lại từ đầu
+            if (currentMoveIndex >= movePoints.Count)
+            {
+                currentMoveIndex = 0;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Bomb Spawn
+
+    private IEnumerator WaitToThrow()
     {
         while (true)
         {
             yield return new WaitForSeconds(throwTimeDelay);
-            if (plane != null && isMove && !isDead)
-            {
-                CalculateBoomPositions();
-            }
+
+            if (plane == null) continue;
+            if (!isMove) continue;
+            if (isDead) continue;
+
+            CalculateBoomPositions();
         }
     }
 
-    // Master Client sẽ tính toán vị trí ngẫu nhiên của bom
-    void CalculateBoomPositions()
+    private void CalculateBoomPositions()
     {
+        List<Vector3> validPoints = new();
+
         for (int i = 0; i < boomCount; i++)
         {
-            Vector2 randomCircle = Random.insideUnitCircle * radius;
-            Vector3 spawnPos = plane.transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
+            Vector3 ranPos = GetRandomPointInPolygon();
+            bool validPoint = false;
 
-            // Gửi vị trí chính xác này đến TẤT CẢ các máy player khác thông qua RPC
-            pv.RPC("RPC_SpawnBoom", RpcTarget.All, spawnPos);
+            for (int j = 0; j < 100; j++)
+            {
+                bool tooClose = false;
+
+                foreach (Vector3 point in validPoints)
+                {
+                    if (Vector3.Distance(ranPos, point) < distanceEachBomb)
+                    {
+                        tooClose = true;
+                        break;
+                    }
+                }
+
+                if (!tooClose)
+                {
+                    validPoint = true;
+                    break;
+                }
+            }
+
+            if (validPoint)
+            {
+                validPoints.Add(ranPos);
+                pv.RPC(nameof(RPC_SpawnBoom), RpcTarget.All, ranPos);
+            }
         }
     }
 
-    // Hàm RPC nhận vị trí từ Master Client và sinh bom đồng bộ ở mọi máy chơi
+    private Vector3 GetRandomPointInPolygon()
+    {
+        Bounds bounds = GetPolygonBounds();
+
+        for (int i = 0; i < 50; i++)
+        {
+            Vector3 randomPoint = new Vector3(
+                Random.Range(bounds.min.x, bounds.max.x),
+                plane.transform.position.y,
+                Random.Range(bounds.min.z, bounds.max.z)
+            );
+
+            if (IsPointInsidePolygon(randomPoint))
+            {
+                return randomPoint;
+            }
+        }
+
+        return areaPoints[0].position;
+    }
+
+    private Bounds GetPolygonBounds()
+    {
+        Bounds bounds = new Bounds(areaPoints[0].position, Vector3.zero);
+
+        foreach (Transform point in areaPoints)
+        {
+            bounds.Encapsulate(point.position);
+        }
+
+        return bounds;
+    }
+
+    private bool IsPointInsidePolygon(Vector3 point)
+    {
+        bool inside = false;
+
+        for (int i = 0, j = areaPoints.Count - 1; i < areaPoints.Count; j = i++)
+        {
+            Vector3 pi = areaPoints[i].position;
+            Vector3 pj = areaPoints[j].position;
+
+            bool intersect =
+                ((pi.z > point.z) != (pj.z > point.z)) &&
+                (point.x <
+                 (pj.x - pi.x) * (point.z - pi.z) /
+                 (pj.z - pi.z) + pi.x);
+
+            if (intersect)
+            {
+                inside = !inside;
+            }
+        }
+
+        return inside;
+    }
+
     [PunRPC]
-    void RPC_SpawnBoom(Vector3 spawnPos)
+    private void RPC_SpawnBoom(Vector3 spawnPos)
     {
-        if (boomPrefab != null)
+        if (boomPrefab == null) return;
+
+        Instantiate(
+            boomPrefab,
+            spawnPos,
+            Quaternion.identity
+        );
+    }
+
+    #endregion
+
+    #region Trigger
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        if (isDead) return;
+        if (isMove) return;
+
+        if (!other.CompareTag("Player")) return;
+
+        pv.RPC(nameof(RPC_StartPlaneMove), RpcTarget.All);
+    }
+
+    [PunRPC]
+    private void RPC_StartPlaneMove()
+    {
+        if (plane != null)
         {
-            Instantiate(boomPrefab, spawnPos, Quaternion.identity);
+            plane.SetActive(true);
+        }
+
+        isMove = true;
+
+        currentMoveIndex = 0;
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (throwCoroutine != null)
+            {
+                StopCoroutine(throwCoroutine);
+            }
+
+            throwCoroutine = StartCoroutine(WaitToThrow());
         }
     }
 
-    void MovePlane()
+    #endregion
+
+    public void ReachedEndPoint()
     {
-        if (movePoints == null || movePoints.Length == 0) return;
-        // Xử lí di chuyển đến các điếm
-        Transform targetPoint = movePoints[currentPointIndex];
-        Vector3 direction = targetPoint.position - plane.transform.position;
+        if (isDead) return;
 
-        plane.transform.position = Vector3.MoveTowards(plane.transform.position, targetPoint.position, moveSpeed * Time.deltaTime);
-        // Xử lí hướng xoay qua các điểm
-        if (direction != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            plane.transform.rotation = Quaternion.Slerp(plane.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
-
-        if (Vector3.Distance(plane.transform.position, targetPoint.position) < 0.2f)
-        {
-            if (currentPointIndex >= movePoints.Length - 1)
-            {
-                ReachedEndPoint();
-            }
-            else
-            {
-                currentPointIndex++;
-            }
-        }
-    }
-
-    void ReachedEndPoint()
-    {
         isDead = true;
 
-        // Hủy đối tượng đồng bộ trên mạng qua Master Client
+        if (throwCoroutine != null)
+        {
+            StopCoroutine(throwCoroutine);
+        }
+
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.Destroy(gameObject);
         }
     }
 
-    void OnDrawGizmos()
-    {
-        if (movePoints != null && movePoints.Length > 0)
-        {
-            Gizmos.color = Color.green;
-            for (int i = 0; i < movePoints.Length; i++)
-            {
-                Vector3 current = movePoints[i].position;
-                Gizmos.DrawSphere(current, 0.3f);
+    #region Gizmos
 
-                if (i < movePoints.Length - 1)
+    private void OnDrawGizmos()
+    {
+        // Bomb Area
+        if (areaPoints != null && areaPoints.Count >= 2)
+        {
+            Gizmos.color = Color.red;
+
+            for (int i = 0; i < areaPoints.Count; i++)
+            {
+                Transform current = areaPoints[i];
+                Transform next = areaPoints[(i + 1) % areaPoints.Count];
+
+                if (current != null && next != null)
                 {
-                    Vector3 next = movePoints[i + 1].position;
-                    Gizmos.DrawLine(current, next);
+                    Gizmos.DrawLine(current.position, next.position);
                 }
             }
         }
 
-        if (plane != null)
+        // Move Path
+        if (movePoints != null && movePoints.Count >= 2)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(plane.transform.position, radius);
-        }
-    }
+            Gizmos.color = Color.cyan;
 
-    // Kích hoạt máy bay bay khi Player chạm vào vùng Trigger
-    void OnTriggerEnter(Collider other)
-    {
-        if (isDead || isMove) return;
-
-        if (other.CompareTag("Player"))
-        {
-            // Đồng bộ trạng thái kích hoạt cho toàn bộ phòng chơi
-            if (PhotonNetwork.IsMasterClient)
+            for (int i = 0; i < movePoints.Count; i++)
             {
-                pv.RPC("RPC_StartPlaneMove", RpcTarget.All);
+                Transform current = movePoints[i];
+                Transform next = movePoints[(i + 1) % movePoints.Count];
+
+                if (current != null && next != null)
+                {
+                    Gizmos.DrawLine(current.position, next.position);
+                }
             }
         }
     }
 
-    [PunRPC]
-    void RPC_StartPlaneMove()
-    {
-        plane.SetActive(true);
-        isMove = true;
-    }
+    #endregion
 }

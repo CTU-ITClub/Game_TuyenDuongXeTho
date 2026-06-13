@@ -15,12 +15,48 @@ namespace Game.Features.InputSystem
         [Tooltip("Đảo ngược trục Y của chuột")]
         [SerializeField] private bool _invertYAxis = false;
 
+
+        [Header("Sound Settings")]
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _walkSound;
+        public bool canPlaySound = true;
+
+        void Update()
+        {
+            if (!canPlaySound && _audioSource != null && _audioSource.isPlaying)
+            {
+                _audioSource.Stop();
+            }
+        }
+
         // IMovementInput Interface
         public Vector2 GetMovementVector()
         {
+            if (_audioSource != null && _walkSound != null && canPlaySound)
+            {
+                // Debug bool canPlaySound để kiểm tra xem có được phép phát âm thanh hay không
+                Debug.Log("canPlaySound: " + canPlaySound);
+                if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+                {
+                    if (!_audioSource.isPlaying)
+                    {
+                        _audioSource.clip = _walkSound;
+                        _audioSource.Play();
+                    }
+                }
+                else
+                {
+                    if (_audioSource.isPlaying)
+                    {
+                        _audioSource.Stop();
+                    }
+                }
+            }
+
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
-            return new Vector2(horizontal, vertical).normalized;
+
+            return new Vector2(horizontal, vertical);
         }
 
         public bool JumpKeyPressed() => Input.GetKeyDown(_jumpKey);
@@ -42,6 +78,11 @@ namespace Game.Features.InputSystem
         // IInteractInput Interface
         public bool InteractKeyPressed() => Input.GetKeyDown(_interactKey);
         public bool ExitPressed() => Input.GetKeyDown(_exitKey);
+
+        public void ChangeInvertYAxis(bool value)
+        {
+            _invertYAxis = value;
+        }
 
     }
 }

@@ -194,6 +194,7 @@ GameObject:
   - component: {fileID: 8019704176331180779}
   - component: {fileID: -4053819264045154626}
   - component: {fileID: 7675003423491923246}
+  - component: {fileID: 2831712590253320711}
   m_Layer: 0
   m_Name: Boom 2
   m_TagString: Bomb
@@ -237,6 +238,10 @@ MonoBehaviour:
     m_Bits: 4294967295
   maxDistance: 50
   explosionEffect: {fileID: 6837494171943959486}
+  checkRadius: 1
+  _audioSource: {fileID: 2831712590253320711}
+  _exploSound: {fileID: 8300000, guid: 60942aa6cddaf3642bfef8e8511627b0, type: 3}
+  _smokeSound: {fileID: 8300000, guid: c14e9d986081db14ca45324cbc1bf2ea, type: 3}
 --- !u!54 &-4053819264045154626
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -285,6 +290,103 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!82 &2831712590253320711
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8891424833900054909}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: -4316581082249261668, guid: af11373e3bcf599448ae1cdbd5f9c92f, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 30
+  MaxDistance: 200
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &798187698095826037
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -388,6 +490,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 3821257137502102720}
     m_Modifications:
     - target: {fileID: 582033263591277032, guid: 7cd1504d167e4724eb33f762e81ccb5a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 582033263591277032, guid: 7cd1504d167e4724eb33f762e81ccb5a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 582033263591277032, guid: 7cd1504d167e4724eb33f762e81ccb5a, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 582033263591277032, guid: 7cd1504d167e4724eb33f762e81ccb5a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.00611
       objectReference: {fileID: 0}
@@ -427,6 +541,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 582033263591277032, guid: 7cd1504d167e4724eb33f762e81ccb5a, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2913829094744534658, guid: 7cd1504d167e4724eb33f762e81ccb5a, type: 3}
       propertyPath: playOnAwake
       value: 0
@@ -461,7 +579,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2913829094744534658, guid: 7cd1504d167e4724eb33f762e81ccb5a, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 10
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2913829094744534658, guid: 7cd1504d167e4724eb33f762e81ccb5a, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b

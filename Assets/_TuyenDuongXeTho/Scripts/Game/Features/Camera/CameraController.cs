@@ -14,6 +14,8 @@ namespace Game.Features.CameraSystem
         [Header("--- Core References ---")]
         [Tooltip("Transform của Player (Nhân vật chính)")]
         [SerializeField] private Transform _playerTarget;
+        [SerializeField] private Transform _playerTarget1;
+
         [Tooltip("Vị trí đặt Camera khi ở FPS (thường là transform ở vị trí mắt/đầu)")]
         [SerializeField] private Transform _headPosition;
         [SerializeField] private PlayerController _player;
@@ -48,6 +50,12 @@ namespace Game.Features.CameraSystem
 
         // Getter public để PlayerController biết mà không làm lộ Enum nội bộ (Encapsulation)
         public bool IsFirstPersonView => _currentState == CameraState.FirstPerson;
+
+        [Header("Change Cam")]
+        public Transform[] targets = new Transform[2];
+        bool canChange = false;
+        private int currentTargetIndex = 0;
+        public GameObject guide;
 
         private void Awake()
         {
@@ -87,6 +95,13 @@ namespace Game.Features.CameraSystem
             FindTargets();
             if (_cameraInput == null) return;
             HandleInput();
+
+            ActiveChangeTarget();
+
+            if (Input.GetKeyDown(KeyCode.Tab) && canChange)
+            {
+                ChangeTarget();
+            }
         }
 
         private void LateUpdate()
@@ -170,16 +185,19 @@ namespace Game.Features.CameraSystem
             // 1. Ưu tiên lấy từ LocalPlayer.TagObject nếu bạn đã gán trước đó
             GameObject localPlayer = PhotonNetwork.LocalPlayer.TagObject as GameObject;
 
-            if (localPlayer != null)
+            Transform player = localPlayer != null ? localPlayer.transform : null;
+            if (player != null)
             {
-                _playerTarget = localPlayer.transform;
+                _playerTarget = player;
+                _playerTarget1 = player.GetComponentsInChildren<Transform>(true)
+                                    .FirstOrDefault(t => t.name == "mixamorig:Hips");
             }
 
             // 3. Sau khi đã có _playerTarget, tìm vị trí Camera
-            if (_playerTarget != null && _headPosition == null)
+            if (player != null && _headPosition == null)
             {
                 // Tìm trong tất cả các object con ở mọi cấp độ
-                Transform found = _playerTarget.GetComponentsInChildren<Transform>(true)
+                Transform found = player.GetComponentsInChildren<Transform>(true)
                                     .FirstOrDefault(t => t.name == "FirstCam");
 
                 if (found != null)
@@ -188,10 +206,58 @@ namespace Game.Features.CameraSystem
                 }
             }
 
-            if (_player == null && _playerTarget != null)
+            if (_player == null && player != null)
             {
-                _player = _playerTarget.GetComponent<PlayerController>();
+                _player = player.GetComponent<PlayerController>();
             }
+        }
+
+        //Change Target
+        private void ActiveChangeTarget()
+        {
+            if (_player == null) return;
+            if (canChange) return;
+
+            if (_player.isDead)
+            {
+                if (guide != null) guide.SetActive(true);
+
+                _playerTarget = _playerTarget1;
+                canChange = true;
+                FindAllTargets();
+            }
+        }
+
+        private void FindAllTargets()
+        {
+            //Tìm kiểm tất cả các object có tag "Player" trong scene
+            GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+            //Lưu transform của chúng vào mảng targets
+            for (int i = 0; i < playerObjects.Length && i < targets.Length; i++)
+            {
+                targets[i] = playerObjects[i].transform;
+            }
+            //Đổi target hiện tại thành con của nó theo tên "mixamorig:Hips"
+            foreach(Transform target in targets)
+            {
+                if (target != null)
+                {
+                    Transform hips = target.GetComponentsInChildren<Transform>(true)
+                                    .FirstOrDefault(t => t.name == "mixamorig:Hips");
+                    if (hips != null)
+                    {
+                        _playerTarget = hips;
+                        break; 
+                    }
+                }
+            }
+        }
+        private void ChangeTarget()
+        {
+            if(targets.Length < 2) return;
+            currentTargetIndex = (currentTargetIndex + 1) % targets.Length;
+
+            _playerTarget = targets[currentTargetIndex];
         }
     }
 }

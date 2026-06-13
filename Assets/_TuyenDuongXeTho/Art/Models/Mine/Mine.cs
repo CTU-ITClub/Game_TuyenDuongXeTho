@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Game.Features.Player;
 
 public class Mine : MonoBehaviour
 {
@@ -10,11 +11,14 @@ public class Mine : MonoBehaviour
 
     [Header("State")]
     public bool isExploded = false;
+    public float checkRadius = 5f;
 
     public void Explode()
     {
         if (isExploded) return;
         isExploded = true;
+
+        CheckPlayer();
 
         Debug.Log(gameObject.name + " đã nổ!");
 
@@ -46,6 +50,18 @@ public class Mine : MonoBehaviour
         Destroy(gameObject, 0.1f);
     }
 
+    private void CheckPlayer()
+    {
+        //Check Tag player
+        Collider[] collider = Physics.OverlapSphere(transform.position, checkRadius, LayerMask.GetMask("Player"));
+
+        foreach (Collider cl in collider)
+        {
+            PlayerController player = cl.GetComponent<PlayerController>();
+            player.StartRagdollWithBomb(transform.position, 15f, 5f);
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -58,5 +74,7 @@ public class Mine : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, explosionRadius);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, checkRadius);
     }
 }

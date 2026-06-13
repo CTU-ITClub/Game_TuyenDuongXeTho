@@ -19,11 +19,11 @@ MonoBehaviour:
     AppIdVoice: 
     AppVersion: 
     UseNameServer: 1
-    FixedRegion: 
+    FixedRegion: Asia
     Server: 
     Port: 0
     ProxyServer: 
-    Protocol: 0
+    Protocol: 5
     EnableProtocolFallback: 1
     AuthMode: 0
     EnableLobbyStatistics: 0
@@ -54,6 +54,11 @@ MonoBehaviour:
   - RPC_SyncRagdollState
   - RPC_SetRagdollState
   - RPC_TriggerDeathRagdollWithForce
+  - RPC_ResetVehicle
+  - MoveRPC
+  - RPC_PlayRideSound
+  - RPC_SetBoost
+  - RPC_SetSoundState
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1
   DevRegionSetOnce: 1

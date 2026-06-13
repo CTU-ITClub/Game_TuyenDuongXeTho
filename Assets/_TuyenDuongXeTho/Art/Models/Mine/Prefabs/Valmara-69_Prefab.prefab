@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5362239883740334407}
   - component: {fileID: 647694131891127860}
   - component: {fileID: 3133196832853143}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: Valmara-69_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,13 +68,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e6c9616865521b4b867d5c87e75397e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mine
-  explosionRadius: 7
+  explosionRadius: 8
   mineLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 64
   particle: {fileID: 9108363248823573842}
   visualModel: {fileID: 842684703573245500}
   isExploded: 0
+  checkRadius: 2.5
 --- !u!1001 &536131301622563693
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -123,9 +124,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5568371526223589888, guid: 794a19c8e8dd923499204548e55bb827, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 794a19c8e8dd923499204548e55bb827, type: 3}
       propertyPath: m_Name
       value: untitled
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 794a19c8e8dd923499204548e55bb827, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7071182760956848314, guid: 794a19c8e8dd923499204548e55bb827, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -135,6 +144,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 0ae5ea4aafa14fe4b997ecde16c683e7, type: 2}
+    - target: {fileID: 8513859187771203891, guid: 794a19c8e8dd923499204548e55bb827, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -164,6 +177,10 @@ PrefabInstance:
     - target: {fileID: 720799038672594328, guid: 238a45ff6c6be6e43ad578899c2fb554, type: 3}
       propertyPath: m_Name
       value: Warning
+      objectReference: {fileID: 0}
+    - target: {fileID: 720799038672594328, guid: 238a45ff6c6be6e43ad578899c2fb554, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 720799038672594328, guid: 238a45ff6c6be6e43ad578899c2fb554, type: 3}
       propertyPath: m_IsActive
@@ -314,6 +331,10 @@ PrefabInstance:
     - target: {fileID: 4809171458859421548, guid: 4e91ed1a8efe7044785b9bd97a47d87f, type: 3}
       propertyPath: m_Name
       value: Smoke puff
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809171458859421548, guid: 4e91ed1a8efe7044785b9bd97a47d87f, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

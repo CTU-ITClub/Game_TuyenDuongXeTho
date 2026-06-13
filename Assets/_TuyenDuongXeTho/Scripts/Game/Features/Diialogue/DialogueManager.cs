@@ -30,6 +30,9 @@ public class DialogueManager : MonoBehaviour
     private Animator currentAnimator;
     private CinemachineCamera currentCam;
     public PlayerController playerControl;
+    private DialogueTrigger currentTrigger;
+
+    public AudioSource audioSource;
 
     private void Awake()
     {
@@ -49,7 +52,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void StartDialogue(Dialogue dialogue, Animator animate, CinemachineCamera cam, PlayerController player)
+    public void StartDialogue(Dialogue dialogue, Animator animate, CinemachineCamera cam, PlayerController player, DialogueTrigger diaTrigger)
     {
         isDialogueActive = true;
 
@@ -58,6 +61,7 @@ public class DialogueManager : MonoBehaviour
         currentAnimator = animate;
         currentCam = cam;
         playerControl = player;
+        currentTrigger = diaTrigger;
 
         if (currentAnimator != null)
         {
@@ -86,6 +90,12 @@ public class DialogueManager : MonoBehaviour
         // Nếu đang typing thì hiện full text
         if (isTyping)
         {
+            // Tắt tiêng typing
+            if (audioSource != null)
+            {
+                audioSource.Stop();
+            }
+
             StopAllCoroutines();
 
             dialogueArea.text = currentFullSentence;
@@ -115,6 +125,11 @@ public class DialogueManager : MonoBehaviour
 
     IEnumerator TypeSentence(string sentence)
     {
+        if (audioSource != null)
+        {
+            audioSource.Play();
+        }
+
         isTyping = true;
 
         dialogueArea.text = "";
@@ -139,12 +154,25 @@ public class DialogueManager : MonoBehaviour
 
         dialoguePanel.SetActive(false);
 
-        currentAnimator.SetBool("Talk", false);
+        if (currentAnimator != null)
+        {
+            currentAnimator.SetBool("Talk", false);
+        }
         // Reset priority của cam1 để nó không còn là camera chính nữa
-        currentCam.Priority = 0;
-        currentCam = null;
+        if (currentCam != null)
+        {
+            currentCam.Priority = 0;
+            currentCam = null;
+        }
 
-        playerControl.enabled = true;
-        playerControl = null;
+        if (playerControl != null)
+        {
+            playerControl.enabled = true;
+            playerControl = null;
+        }
+        currentTrigger.isTalking = false;
+        currentTrigger.playerControl.ChangeNotice(currentTrigger.notice);
+        currentTrigger.playerControl._pcInputHandler.canPlaySound = true;
+
     }
 }

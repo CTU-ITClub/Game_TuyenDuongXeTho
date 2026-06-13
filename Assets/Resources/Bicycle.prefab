@@ -129,7 +129,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 1
+  OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
   - {fileID: 2970711209006164214}
@@ -1485,6 +1485,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1683314796472550694}
   - component: {fileID: 8374004137057416744}
+  - component: {fileID: 9045290564318831068}
+  - component: {fileID: 8500862015400002005}
   m_Layer: 0
   m_Name: BicycleRoot
   m_TagString: Untagged
@@ -1533,6 +1535,48 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.28968382, y: 0.27549565, z: 0.78094244}
   m_Center: {x: -0.0006284714, y: 0.55471116, z: 0.13510919}
+--- !u!65 &9045290564318831068
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7341775411681800004}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.06222849, y: 0.30238304, z: 1.3167841}
+  m_Center: {x: 0.18, y: 0.3488086, z: 0.15839186}
+--- !u!65 &8500862015400002005
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7341775411681800004}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.06222849, y: 0.30238304, z: 1.3167841}
+  m_Center: {x: -0.18, y: 0.3488086, z: 0.15839186}
 --- !u!1 &7357700696422888514
 GameObject:
   m_ObjectHideFlags: 0

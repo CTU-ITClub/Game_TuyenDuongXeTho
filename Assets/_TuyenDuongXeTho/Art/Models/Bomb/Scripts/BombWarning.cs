@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Game.Features.Player;
 
 public class BombWarning : MonoBehaviour
 {
@@ -15,6 +16,13 @@ public class BombWarning : MonoBehaviour
     public ParticleSystem explosionEffect;
 
     private Rigidbody rb;
+    
+    [Header("CheckPlayer")]
+    public float checkRadius = 5f;
+
+    [Header("Sound Settings")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _exploSound, _smokeSound;
 
     void Start()
     {
@@ -22,6 +30,13 @@ public class BombWarning : MonoBehaviour
         ShowWarning();
         // Phá hủy sau 20s nếu chưa nổ
         Destroy(gameObject, 20f);
+
+        if (_audioSource != null && _smokeSound != null)
+        {
+            _audioSource.clip = _smokeSound;
+            _audioSource.loop = true;
+            _audioSource.Play();
+        }
     }
 
     void Update()
@@ -72,7 +87,7 @@ public class BombWarning : MonoBehaviour
     void OnTriggerEnter(Collider other) // Do trên mặt nước không có collider nên dùng trigger để phát hiện
     {
         if (hasExploded) return;
-        if (other.CompareTag("Water"))
+        if (other.CompareTag("Water") || other.CompareTag("Player")) 
         {
             Explode();
         }
@@ -81,6 +96,16 @@ public class BombWarning : MonoBehaviour
     void Explode()
     {
         hasExploded = true;
+
+        CheckPlayer();
+
+        // Phát âm thanh khi nổ
+        if (_audioSource != null && _exploSound != null)
+        {
+            _audioSource.clip = _exploSound;
+            _audioSource.loop = false;
+            _audioSource.Play();
+        }
 
         if (explosionEffect != null)
         {
@@ -122,5 +147,24 @@ public class BombWarning : MonoBehaviour
         {
             Destroy(currentWarning);
         }
+    }
+
+    private void CheckPlayer()
+    {
+        //Check Tag player
+        Collider[] collider = Physics.OverlapSphere(transform.position, checkRadius, LayerMask.GetMask("Player"));
+
+        foreach (Collider cl in collider)
+        {
+            PlayerController player = cl.GetComponent<PlayerController>();
+            if (player != null) 
+                player.StartRagdollWithBomb(transform.position, 15f, 5f);
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, checkRadius);
     }
 }

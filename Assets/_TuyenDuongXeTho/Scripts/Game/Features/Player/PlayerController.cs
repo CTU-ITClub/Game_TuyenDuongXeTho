@@ -5,6 +5,7 @@ using Photon.Pun;
 using VGDSystem.Animation;
 using Core.Constains;
 using TMPro;
+using Game.Features.InputSystem;
 
 namespace Game.Features.Player
 {
@@ -40,6 +41,7 @@ namespace Game.Features.Player
         [Header("--- Input Provider (Plug & Play) ---")]
         [Tooltip("Kéo Object chứa script input tùy hệ điều hành")]
         [SerializeField] private GameObject _inputProvider;
+        public PCInputHandler _pcInputHandler;
 
         [Header("--- Ragdoll Settings ---")]
         [Tooltip("Kéo xương hông (mixamorig:Hips) vào đây để đồng bộ vị trí khi đứng dậy")]
@@ -87,15 +89,18 @@ namespace Game.Features.Player
         public PlayerRigging PlayerRig() => _playerRig;
         public IPlayerState CurrentPlayerState => _currentState;
         #endregion
-
-        PhotonView pv;
-        public TextMeshProUGUI interactBut;
-        bool CanMove = true;
-
+        
         #region Ragdoll Private Fields
         private Rigidbody[] _ragdollRigidbodies;
         private Collider[] _ragdollColliders;
         #endregion
+
+        public PhotonView pv;
+        public TextMeshProUGUI interactBut, interactBut1;
+        public bool CanMove = true;
+        bool CountPlayer = false;
+        public bool OnVehicle = false;
+        public bool isDead = false;
 
         private void Awake()
         {
@@ -106,6 +111,7 @@ namespace Game.Features.Player
             {
                 _movementInput = _inputProvider.GetComponent<IMovementInput>();
                 _interactInput = _inputProvider.GetComponent<IInteractInput>();
+                _pcInputHandler = _inputProvider.GetComponent<PCInputHandler>();
             }
 
             if (_movementInput == null)
@@ -145,30 +151,55 @@ namespace Game.Features.Player
 
         private void Update()
         {
+            CounterCheckPlayer();
+
             if (!pv.IsMine) return;
             if (_movementInput == null) return;
 
             if (!CanMove) return;
 
             HandleInput();
+
             HandleInteraction();
 
             _currentState?.Update();
 
-            //Test Ragdoll 
-            if (pv.IsMine && Input.GetKeyDown(KeyCode.P))
+            /*if (Input.GetKey(KeyCode.T))
             {
-                StartRagdollWithBomb(transform.position, 15f, 5f);
-            }
+                StartRagdollWithBomb(bombPosition: transform.position, explosionForce: 15f, explosionRadius: 5f);
+            }*/
         }
 
         private void FixedUpdate()
         {
+            CounterCheckPlayer();
+
             if (!pv.IsMine) return;
 
             if (!CanMove) return;
 
             _currentState?.FixedUpdate();
+        }
+
+        // Kiểm tra đủ người join phòng chưa
+        private void CounterCheckPlayer()
+        {
+            int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
+            if (playerCount < 2)
+            {
+                CountPlayer = false;
+                CanMove = false;
+                ChangeNotice1("Chờ người chơi khác...");
+            }
+            else
+            {
+                if (CountPlayer == false)
+                {
+                    CanMove = true;
+                    ChangeNotice1("");
+                    CountPlayer = true;
+                }
+            }
         }
 
         //hàm nhận nút di chuyển và nhảy
@@ -190,13 +221,19 @@ namespace Game.Features.Player
             //khi nhấn E và slot đó chưa có người ngồi thì sẽ chuyển sang trạng thái của slot đó
             if (_interactInput.InteractKeyPressed() && _targetVehicleSlot.CanInteract())
             {
+                OnVehicle = true;
+
+                _pcInputHandler.canPlaySound = false;
+
                 if (_targetVehicleSlot.GetSlotType() == VehicleSlotType.Push)
                 {
                     ChangeState(PushState);
+                    ChangeNotice1("GIỮ W ĐỂ ĐẨY, S ĐỂ KÉO, LEFT SHIFT TĂNG TỐC");
                 }
                 else
                 {
                     ChangeState(SteerState);
+                    ChangeNotice1("GIỮ A ĐỂ QUẸO TRÁI, D PHẢI");
                 }
             }
         }
@@ -208,7 +245,7 @@ namespace Game.Features.Player
 
             slot.OnInteractEnter(this);
 
-            ChangeNotice("Press F to Exit");
+            ChangeNotice("NHẤN F ĐỂ THOÁT");
         }
 
         //xuống xe
@@ -221,6 +258,10 @@ namespace Game.Features.Player
             }
 
             ChangeNotice("");
+            ChangeNotice1("");
+
+            OnVehicle = false;
+            _pcInputHandler.canPlaySound = true;
         }
 
         public void ChangeState(IPlayerState state)
@@ -356,22 +397,22 @@ namespace Game.Features.Player
                 interactBut.text = message;
         }
 
+        public void ChangeNotice1(string message)
+        {
+            if (!pv.IsMine) return;
+
+            if (interactBut1 != null)
+                interactBut1.text = message;
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (!CanMove) return; // Không tương tác xe khi đang ngã Ragdoll
             if (other.TryGetComponent(out IVehicleable vehicle))
             {
                 _targetVehicleSlot = vehicle;
-                ChangeNotice("PRESS E");
-            }
-            // --- Logic Bị Trúng Bom ---
-            if (pv.IsMine && other.CompareTag("Bomb"))
-            {
-                float lucNay = 15f;      // Tăng số này lên nếu muốn bay xa/mạnh hơn (Ví dụ: 15f, 20f, 25f...)
-                float banKinhNo = 5f;    // Bán kính ảnh hưởng của quả bom
-
-                // Gọi hàm kích hoạt ngã Ragdoll có kèm lực đẩy từ vị trí quả bom
-                StartRagdollWithBomb(other.transform.position, lucNay, banKinhNo);
+                if (_targetVehicleSlot.CanInteract())
+                    ChangeNotice("NHẤN E");
             }
         }
 
@@ -425,7 +466,9 @@ namespace Game.Features.Player
         [PunRPC]
         private void RPC_TriggerDeathRagdollWithForce(Vector3 bombPos, float force, float radius)
         {
+            DismountVehicle();
             CanMove = false;
+            isDead = true;
             _controller.enabled = false;
             _animator.DisableAnimator();
 

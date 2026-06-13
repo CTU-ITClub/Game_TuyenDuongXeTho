@@ -23,6 +23,9 @@ namespace Game.Features.Vehicle
 
         public VehicleSlotType GetSlotType() => _slotType;
 
+        [Header("UI")]
+        public GameObject canvas;
+
         public string GetInteractionPrompt()
         {
             return $"Nhấn E để {(_slotType == VehicleSlotType.Push ? "đẩy" : "lái")}";
@@ -33,11 +36,8 @@ namespace Game.Features.Vehicle
         public Transform GetMountPoint() => _mountPoint;
 
         public VehicleController GetVehicleController() => _vehicle;
-
-        // =====================================================
+        
         // ENTER
-        // =====================================================
-
         public void OnInteractEnter(PlayerController player)
         {
             if (_currentPlayer != null)
@@ -53,12 +53,12 @@ namespace Game.Features.Vehicle
                 RpcTarget.AllBuffered,
                 playerPV.ViewID
             );
+
+            if (canvas != null)
+                canvas.SetActive(true);
         }
 
-        // =====================================================
         // EXIT
-        // =====================================================
-
         public void OnInteractExit()
         {
             if (_currentPlayer == null)
@@ -68,12 +68,12 @@ namespace Game.Features.Vehicle
                 nameof(RPC_HandlePlayerExit),
                 RpcTarget.AllBuffered
             );
+
+            if (canvas != null)
+                canvas.SetActive(false);
         }
 
-        // =====================================================
         // RPC ENTER
-        // =====================================================
-
         [PunRPC]
         private void RPC_HandlePlayerEnter(int playerViewID)
         {
@@ -90,29 +90,17 @@ namespace Game.Features.Vehicle
 
             _currentPlayer = player;
 
-            // =============================
-            // CHARACTER CONTROLLER
-            // =============================
-
             CharacterController cc =
                 player.GetComponent<CharacterController>();
 
             if (cc != null)
                 cc.enabled = false;
 
-            // =============================
-            // CAPSULE COLLIDER
-            // =============================
-
             CapsuleCollider capsule =
                 player.GetComponent<CapsuleCollider>();
 
             if (capsule != null)
                 capsule.isTrigger = true;
-
-            // =============================
-            // RIGIDBODY
-            // =============================
 
             Rigidbody rb =
                 player.GetComponent<Rigidbody>();
@@ -126,29 +114,18 @@ namespace Game.Features.Vehicle
                 rb.detectCollisions = false;
             }
 
-            // =============================
-            // PHOTON TRANSFORM VIEW
-            // =============================
-
             PhotonTransformView ptv =
                 player.GetComponent<PhotonTransformView>();
 
             if (ptv != null)
                 ptv.enabled = false;
 
-            // =============================
-            // SNAP VÀO GHẾ
-            // =============================
-
             player.transform.SetParent(_mountPoint);
 
             player.transform.localPosition = Vector3.zero;
             player.transform.localRotation = Quaternion.identity;
 
-            // =============================
-            // IK HAND
-            // =============================
-
+            // IK
             if (_slotType != VehicleSlotType.Push)
             {
                 player.PlayerRig().SetHandTargets(
@@ -158,10 +135,6 @@ namespace Game.Features.Vehicle
             }
         }
 
-        // =====================================================
-        // RPC EXIT
-        // =====================================================
-
         [PunRPC]
         private void RPC_HandlePlayerExit()
         {
@@ -170,42 +143,20 @@ namespace Game.Features.Vehicle
 
             PlayerController player = _currentPlayer;
 
-            // =============================
-            // BỎ PARENT
-            // =============================
-
             player.transform.SetParent(null);
 
-            // =============================
-            // ĐẨY PLAYER RA NGOÀI XE
-            // =============================
-
-            player.transform.position =
-                _mountPoint.position + (_mountPoint.right * 1.5f);
-
-            // =============================
-            // CHARACTER CONTROLLER
-            // =============================
-
+            player.transform.position = _mountPoint.position + (Vector3.up * 2f) + (-_mountPoint.right * 1.5f);
             CharacterController cc =
                 player.GetComponent<CharacterController>();
 
             if (cc != null)
                 cc.enabled = true;
 
-            // =============================
-            // CAPSULE COLLIDER
-            // =============================
-
             CapsuleCollider capsule =
                 player.GetComponent<CapsuleCollider>();
 
             if (capsule != null)
                 capsule.isTrigger = false;
-
-            // =============================
-            // RIGIDBODY
-            // =============================
 
             Rigidbody rb =
                 player.GetComponent<Rigidbody>();
@@ -216,20 +167,13 @@ namespace Game.Features.Vehicle
                 rb.isKinematic = false;
             }
 
-            // =============================
-            // PHOTON TRANSFORM VIEW
-            // =============================
-
             PhotonTransformView ptv =
                 player.GetComponent<PhotonTransformView>();
 
             if (ptv != null)
                 ptv.enabled = true;
 
-            // =============================
             // CLEAR IK
-            // =============================
-
             player.PlayerRig().ClearHandTargets();
 
             _currentPlayer = null;

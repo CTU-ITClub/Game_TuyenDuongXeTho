@@ -34,7 +34,7 @@ public class RoomList : MonoBehaviourPunCallbacks
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        maxPlayerSet = 0;
+        maxPlayerSet = 2;
         instance = this;
         PhotonNetwork.AutomaticallySyncScene = true; 
     }
