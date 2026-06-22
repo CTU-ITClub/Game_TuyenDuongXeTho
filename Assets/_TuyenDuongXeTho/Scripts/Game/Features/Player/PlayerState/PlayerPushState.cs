@@ -7,7 +7,7 @@ using Core.Constains;
 public class PlayerPushState : IPlayerState
 {
     private PlayerController _player;
-    private VehicleController _vehicle;
+    public VehicleController _vehicle;
 
     public PlayerPushState(PlayerController player)
     {

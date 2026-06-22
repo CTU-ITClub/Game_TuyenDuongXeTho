@@ -56,17 +56,50 @@ MonoBehaviour:
   dialogue:
     dialogueLines:
     - character:
-        name: NPC1
+        name: "TI\u1EC2U \u0110\u1ED8I TR\u01AF\u1EDENG"
         icon: {fileID: 21300000, guid: 09b860f26ad0a534ba211e7484b6babe, type: 3}
-      line: Conversation 1
+      line: "Xin ch\xE0o \u0111\u1ED3ng ch\xED! T\xF4i \u0111\u1EE3i c\xE1c c\u1EADu
+        kh\xE1 l\xE2u r\u1ED3i \u0111\xF3, nhi\u1EC7m v\u1EE5 c\u1EE7a c\xE1c c\u1EADu
+        l\u1EA7n n\xE0y v\xF4 c\xF9ng quan tr\u1ECDng \u0111\u1EA5y!"
     - character:
-        name: NPC1
+        name: "TI\u1EC2U \u0110\u1ED8I TR\u01AF\u1EDENG"
         icon: {fileID: 21300000, guid: 09b860f26ad0a534ba211e7484b6babe, type: 3}
-      line: Conversation 2
+      line: "Ngo\xE0i kia tr\xEAn \u0110\u01B0\u1EDDng s\u1ED1 13, qu\xE2n d\xE2n
+        ta ng\xE0y \u0111\xEAm th\u1ED3 h\xE0ng ti\u1EBFn v\u1EC1 b\u1EBFn ph\xE0
+        T\u1EA1 Khoa \u0111\u1EC3 v\u01B0\u1EE3t s\xF4ng \u0110\xE0 v\xE0o \u0110i\u1EC7n
+        Bi\xEAn Ph\u1EE7. "
     - character:
-        name: NPC1
+        name: "TI\u1EC2U \u0110\u1ED8I TR\u01AF\u1EDENG"
         icon: {fileID: 21300000, guid: 09b860f26ad0a534ba211e7484b6babe, type: 3}
-      line: Conversation 3
+      line: "Chi\u1EBFn d\u1ECBch \u0111ang \u1EDF h\u1ED3i quy\u1EBFt \u0111\u1ECBnh,
+        ti\u1EC1n tuy\u1EBFn \u0111ang ch\u1EDD t\u1EEBng c\xE2n g\u1EA1o, kh\xF4ng
+        c\xF3 l\u01B0\u01A1ng th\u1EF1c th\xEC b\u1ED9 \u0111\u1ED9i kh\xF4ng th\u1EC3
+        c\u1EA7m c\u1EF1 th\xEAm m\u1ED9t ng\xE0y n\xE0o n\u1EEFa \u0111\xE2u!"
+    - character:
+        name: "TI\u1EC2U \u0110\u1ED8I TR\u01AF\u1EDENG"
+        icon: {fileID: 21300000, guid: 09b860f26ad0a534ba211e7484b6babe, type: 3}
+      line: "\u0110\u1EC3 \u0111i\u1EC1u khi\u1EC3n \u0111\u01B0\u1EE3c chi\u1EBFc
+        xe th\u1ED3 n\xE0y c\u1EA7n m\u1ED9t ng\u01B0\u1EDDi v\xE0o v\u1ECB tr\xED
+        \u0111\xE1nh l\xE1i gi\u1EEF ch\u1EB7t tay ngai tre \u0111\u1EC3 \u0111i\u1EC1u
+        h\u01B0\u1EDBng b\xE1nh xe, m\u1ED9t ng\u01B0\u1EDDi ph\xEDa sau \u0111\u1EA9y
+        t\u1EDBi ho\u1EB7c k\xE9o l\xF9i l\u1EA1i. "
+    - character:
+        name: "TI\u1EC2U \u0110\u1ED8I TR\u01AF\u1EDENG"
+        icon: {fileID: 21300000, guid: 09b860f26ad0a534ba211e7484b6babe, type: 3}
+      line: "\xC0 t\xF4i c\xF2n c\xF3 \u0111\u1EC3 m\u1ED9t b\u1EA3ng h\u01B0\u1EDBng
+        d\u1EABn \u0111\u1EC3 thao t\xE1c to to g\u1EA7n \u0111\xE2y \u0111\xF3 n\xEAn
+        \u0111\u1EBFn \u0111\xF3 xem n\u1EEFa nhe."
+    - character:
+        name: "TI\u1EC2U \u0110\u1ED8I TR\u01AF\u1EDENG"
+        icon: {fileID: 21300000, guid: 09b860f26ad0a534ba211e7484b6babe, type: 3}
+      line: "Ngo\xE0i ra c\u1EA7n ph\u1EA3i n\xE9 c\xE1c nguy hi\u1EC3m tr\xEAn \u0111\u01B0\u1EDDng
+        \u0111i do \u0111\xF3 c\xE1c c\u1EADu c\u1EA7n ph\u1EA3i ph\u1ED1i h\u1EE3p
+        nh\u1ECBp nh\xE0ng v\u1EDBi nhau.\n"
+    - character:
+        name: "TI\u1EC2U \u0110\u1ED8I TR\u01AF\u1EDENG"
+        icon: {fileID: 21300000, guid: 09b860f26ad0a534ba211e7484b6babe, type: 3}
+      line: "H\xE3y tranh th\u1EE7 tr\u1EDDi ch\u1EADp t\u1ED1i m\xE0 \u0111i nhanh
+        \u0111i! Ch\xFAc c\xE1c c\u1EADu may m\u1EAFn!"
   animate: {fileID: 5082137601997601455}
   cam1: {fileID: 6529623149033659318}
   playerControl: {fileID: 0}
@@ -76,6 +109,7 @@ MonoBehaviour:
   isLastNPC: 0
   goalManager: {fileID: 0}
   brain: {fileID: 0}
+  hasXeTho: 0
 --- !u!65 &7676564581857004782
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5258,7 +5292,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 70, y: 40}
+  m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4973209922966365280
 CanvasRenderer:
@@ -5288,7 +5322,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "ANH HO\xC0NG"
+  m_text: "TI\u1EC2U \u0110\u1ED8I TR\u01AF\u1EDENG"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9755c100a4aca02499ff401c702fafae, type: 2}
   m_sharedMaterial: {fileID: 4744844123009465019, guid: 9755c100a4aca02499ff401c702fafae, type: 2}

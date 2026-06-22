@@ -50,7 +50,6 @@ public class Plane_Boom : MonoBehaviourPun
 
     private void Update()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
         if (isDead) return;
         if (!isMove) return;
         if (plane == null) return;
@@ -241,8 +240,6 @@ public class Plane_Boom : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!PhotonNetwork.IsMasterClient) return;
-
         if (isDead) return;
         if (isMove) return;
 

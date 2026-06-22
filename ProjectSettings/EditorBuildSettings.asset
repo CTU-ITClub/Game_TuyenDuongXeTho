@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_TuyenDuongXeTho/Scene/Map1.unity
     guid: a5aa2a25f4f339b48999af2b1fc1a8c4
+  - enabled: 1
+    path: Assets/_TuyenDuongXeTho/Scene/FinalScene.unity
+    guid: 571a546f52d5d774184ace09f2192c67
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

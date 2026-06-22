@@ -52,6 +52,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
+        PhotonNetwork.GetPing();
+
         if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null) return;
 
         playerCount = PhotonNetwork.CurrentRoom.PlayerCount;

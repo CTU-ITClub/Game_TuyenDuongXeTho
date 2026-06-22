@@ -19,11 +19,11 @@ MonoBehaviour:
     AppIdVoice: 
     AppVersion: 
     UseNameServer: 1
-    FixedRegion: Asia
+    FixedRegion: 
     Server: 
     Port: 0
     ProxyServer: 
-    Protocol: 5
+    Protocol: 1
     EnableProtocolFallback: 1
     AuthMode: 0
     EnableLobbyStatistics: 0

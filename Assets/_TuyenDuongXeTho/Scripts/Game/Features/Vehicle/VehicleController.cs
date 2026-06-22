@@ -71,15 +71,6 @@ namespace Game.Features.Vehicle
 
         private void Update()
         {
-            // Giữ Shift để tăng tốc
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                SetBoost(true);
-            }
-            if (Input.GetKeyUp(KeyCode.LeftShift))
-            {
-                SetBoost(false);
-            }
             UpdateStaminaUI();
         }
 
@@ -388,7 +379,10 @@ namespace Game.Features.Vehicle
                 -_steerInput * _maxLeanAngle;
 
             float angularVel =
-                _rb.angularVelocity.z;
+                Vector3.Dot(
+                    _rb.angularVelocity,
+                    transform.forward
+                );
 
             float torque =
                 ((targetTilt - tilt) * _balanceForce)

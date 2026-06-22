@@ -5,6 +5,7 @@ using Unity.Cinemachine;
 using System.Collections;
 using Game.Features.Player;
 using VGDSystem.Animation;
+using Game.Features.Vehicle;
 
 [System.Serializable]
 public class DialogueCharacter
@@ -44,6 +45,9 @@ public class DialogueTrigger : MonoBehaviour
     public bool isLastNPC = false;
     public GoalManager goalManager;
     public CinemachineBrain brain;
+    [Header("CheckAround")]
+    private float radiusCheck = 20f;
+    public bool hasXeTho = false;
 
     void Update()
     {
@@ -53,6 +57,8 @@ public class DialogueTrigger : MonoBehaviour
             isTalking = true;
             StartConversation(playerControl);
         }
+
+        CheckXeTho();
     }
 
     public void TriggerDialogue()
@@ -108,6 +114,12 @@ public class DialogueTrigger : MonoBehaviour
         {
             playerControl = other.GetComponent<PlayerController>();
 
+            if (!hasXeTho && isLastNPC)
+            {
+                playerControl.ChangeNotice1("ĐẨY XE THỒ LẠI GẦN NPC ĐỂ HOÀN THÀNH NHIỆM VỤ");
+                return;
+            }
+
             if (playerPV != null && !playerPV.IsMine)
             {
                 PlayerController[] player = FindObjectsOfType<PlayerController>();
@@ -151,6 +163,28 @@ public class DialogueTrigger : MonoBehaviour
         {
             isReach = false;
             playerControl.ChangeNotice("");
+            playerControl.ChangeNotice1("");
         }
+    }
+
+    public void CheckXeTho()
+    {
+        Collider[] zone = Physics.OverlapSphere(transform.position, radiusCheck, LayerMask.GetMask("XeTho"));
+
+        foreach(Collider obj in zone)
+        {
+            VehicleController vehicle = obj.GetComponent<VehicleController>();
+
+            if (vehicle != null)
+            {
+                hasXeTho = true;
+            }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, radiusCheck);
     }
 }

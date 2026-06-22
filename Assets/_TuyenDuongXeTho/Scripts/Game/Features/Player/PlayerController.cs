@@ -151,7 +151,7 @@ namespace Game.Features.Player
 
         private void Update()
         {
-            CounterCheckPlayer();
+            //CounterCheckPlayer();
 
             if (!pv.IsMine) return;
             if (_movementInput == null) return;
@@ -164,6 +164,16 @@ namespace Game.Features.Player
 
             _currentState?.Update();
 
+            // Left Shift để tăng lực đẩy/kéo
+            if (Input.GetKeyDown(KeyCode.LeftShift) && CurrentPlayerState == PushState)
+            {
+                PushState._vehicle.SetBoost(true);
+            }
+            if (Input.GetKeyUp(KeyCode.LeftShift))
+            {
+                PushState._vehicle.SetBoost(false);
+            }
+
             /*if (Input.GetKey(KeyCode.T))
             {
                 StartRagdollWithBomb(bombPosition: transform.position, explosionForce: 15f, explosionRadius: 5f);
@@ -172,7 +182,7 @@ namespace Game.Features.Player
 
         private void FixedUpdate()
         {
-            CounterCheckPlayer();
+            //CounterCheckPlayer();
 
             if (!pv.IsMine) return;
 
@@ -228,7 +238,7 @@ namespace Game.Features.Player
                 if (_targetVehicleSlot.GetSlotType() == VehicleSlotType.Push)
                 {
                     ChangeState(PushState);
-                    ChangeNotice1("GIỮ W ĐỂ ĐẨY, S ĐỂ KÉO, LEFT SHIFT TĂNG TỐC");
+                    ChangeNotice1("GIỮ W ĐỂ ĐẨY, S ĐỂ KÉO, LEFT SHIFT TÁC ĐỘNG MẠNH HƠN");
                 }
                 else
                 {
@@ -466,6 +476,9 @@ namespace Game.Features.Player
         [PunRPC]
         private void RPC_TriggerDeathRagdollWithForce(Vector3 bombPos, float force, float radius)
         {
+            if (PushState._vehicle != null)
+                PushState._vehicle.SetMotorInput(0f); // Dừng xe ngay lập tức nếu đang đẩy
+
             DismountVehicle();
             CanMove = false;
             isDead = true;

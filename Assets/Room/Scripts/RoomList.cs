@@ -324,4 +324,23 @@ public class RoomList : MonoBehaviourPunCallbacks
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+
+
+    // Refresh Room List
+    public void RefreshRoomList()
+    {
+        StartCoroutine(RefreshLobbyCoroutine());
+    }
+
+    IEnumerator RefreshLobbyCoroutine()
+    {
+        PhotonNetwork.LeaveLobby();
+
+        yield return new WaitUntil(() => !PhotonNetwork.InLobby);
+
+        list.Clear();
+        UpdateUI();
+
+        PhotonNetwork.JoinLobby();
+    }
 }

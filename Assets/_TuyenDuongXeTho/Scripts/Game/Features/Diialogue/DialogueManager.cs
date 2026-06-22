@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Cinemachine;
 using Game.Features.Player;
+using UnityEngine.Splines;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -33,6 +34,17 @@ public class DialogueManager : MonoBehaviour
     private DialogueTrigger currentTrigger;
 
     public AudioSource audioSource;
+    public AudioSource audioSourceMusic;
+    public AudioClip finalMusic;
+
+    public CinemachineCamera lastCam;
+    public GameObject chimLac, scroll_Scene;
+    public GameObject[] objs;
+
+    [Header("Exit feature")]
+    bool canExit = false;
+    bool isLockChimLac = false;
+    public RoomManager roomMana;
 
     private void Awake()
     {
@@ -49,6 +61,11 @@ public class DialogueManager : MonoBehaviour
         if (isDialogueActive && Input.GetKeyDown(KeyCode.N))
         {
             DisplayNextDialogueLine();
+        }
+
+        if (Input.GetKeyDown(KeyCode.X) && canExit)
+        {
+            roomMana.LeaveRoom();
         }
     }
 
@@ -94,6 +111,7 @@ public class DialogueManager : MonoBehaviour
             if (audioSource != null)
             {
                 audioSource.Stop();
+                audioSource.time = 0f;
             }
 
             StopAllCoroutines();
@@ -150,6 +168,12 @@ public class DialogueManager : MonoBehaviour
 
     void EndDialogue()
     {
+        if (currentTrigger.isLastNPC)
+        {
+            ChangeFinalCam();
+            return;
+        }
+
         isDialogueActive = false;
 
         dialoguePanel.SetActive(false);
@@ -173,6 +197,86 @@ public class DialogueManager : MonoBehaviour
         currentTrigger.isTalking = false;
         currentTrigger.playerControl.ChangeNotice(currentTrigger.notice);
         currentTrigger.playerControl._pcInputHandler.canPlaySound = true;
+    }
 
+    private void ChangeFinalCam()
+    {
+        if (audioSourceMusic != null)
+        {
+            audioSource.Stop();
+            audioSourceMusic.clip = finalMusic;
+            audioSourceMusic.Play();
+        }
+
+        //Tắt UI
+        isDialogueActive = false;
+
+        dialoguePanel.SetActive(false);
+
+        if (currentCam != null)
+        {
+            currentCam.Priority = 0;
+            currentCam = null;
+        }
+        //Chuyển sang cam cuối
+        if (lastCam != null)
+        {
+            lastCam.Priority = 50;
+        }
+        //Sau 30s chuyển scene cuối
+        StartCoroutine(LoadFinalScene());
+    }
+
+    IEnumerator WaitBirdFinish()
+    {
+        SplineAnimate chimLacAnimate =
+            chimLac.GetComponent<SplineAnimate>();
+
+        while (chimLacAnimate.NormalizedTime < 0.998f)
+        {
+            yield return null;
+        }
+
+        isLockChimLac = true;
+
+        chimLacAnimate.enabled = false;
+    }
+
+    private IEnumerator LoadFinalScene()
+    {
+        yield return new WaitForSeconds(3f);
+        if (lastCam != null)
+        {
+            GameObject cam = lastCam.gameObject;
+            Animator camAnim = cam.GetComponent<Animator>();
+            camAnim.enabled = true;
+
+            foreach (GameObject obj in objs)
+            {
+                obj.SetActive(false);
+            }
+        }
+
+        yield return new WaitForSeconds(20.2f);
+        if (chimLac != null)
+        {
+            chimLac.SetActive(true);
+        }
+
+        StartCoroutine(WaitBirdFinish());
+
+        yield return new WaitForSeconds(36.8f);
+        if (scroll_Scene != null)
+        {
+            scroll_Scene.SetActive(true);
+            canExit = true;
+
+            Animator sc_animate = scroll_Scene.GetComponent<Animator>();
+            if (sc_animate != null)
+            {
+                sc_animate.enabled = true;
+            }
+
+        }
     }
 }
