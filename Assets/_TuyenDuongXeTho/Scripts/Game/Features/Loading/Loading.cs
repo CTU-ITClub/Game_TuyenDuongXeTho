@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,16 +7,17 @@ public class Loading : MonoBehaviour
     public float time = 3f;
     public Image fill;
     public bool isLoaded = false, turnOnAudio = false;
-    public AudioSource audio;
+    public AudioSource[] audio;
     
     void OnEnable()
     {
         turnOnAudio = false;
         isLoaded = false;
         fill.fillAmount = 0f;
-        if (audio != null)
+
+        foreach (var a in audio)
         {
-            audio.Stop();
+            a.Stop();
         }
 
         StartCoroutine(Load());
@@ -28,9 +29,13 @@ public class Loading : MonoBehaviour
 
         while (t < time)
         {
-            if (t >= time * 2f / 3f && audio != null && !turnOnAudio)
+            if (t >= time * 2f / 3f && audio.Length != 0 && !turnOnAudio)
             {
-                audio.Play();
+                foreach (var a in audio)
+                {
+                    a.Play();
+                }
+
                 turnOnAudio = true;
             }
 

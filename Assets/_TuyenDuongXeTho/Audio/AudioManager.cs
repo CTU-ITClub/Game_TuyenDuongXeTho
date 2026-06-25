@@ -34,10 +34,10 @@ public class AudioManager : MonoBehaviour
             PlayerPrefs.SetInt(SFX_MUTE_KEY, 0);
 
         if (!PlayerPrefs.HasKey(MUSIC_KEY))
-            PlayerPrefs.SetFloat(MUSIC_KEY, 0.5f);
+            PlayerPrefs.SetFloat(MUSIC_KEY, 0.85f);
 
         if (!PlayerPrefs.HasKey(SFX_KEY))
-            PlayerPrefs.SetFloat(SFX_KEY, 0.5f);
+            PlayerPrefs.SetFloat(SFX_KEY, 0.85f);
 
         PlayerPrefs.Save();
     }

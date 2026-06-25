@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class RoomItemButton : MonoBehaviour
 {
@@ -16,11 +17,34 @@ public class RoomItemButton : MonoBehaviour
     private Coroutine noticeCoroutine1;
 
     public bool isFulled = false;
+    private Image image;
+    private Color baseColor;
+
+    public void Awake()
+    {
+        image = GetComponent<Image>();
+        if (image != null )
+        {
+            baseColor = image.color;
+        }
+    }
+
+    void Update()
+    {
+        isFulled = currentPlayer >= maxPlayer;
+        if (isFulled)
+        {
+            image.color = Color.gray;
+        }
+        else
+        {
+            //Theo mã màu đã chọn
+            image.color = baseColor;
+        }
+    }
 
     public void OnClick()
     {
-        if (isFulled) return;
-
         if (maxPlayer == currentPlayer)
         {
             if (noticeCoroutine1 != null)
@@ -44,6 +68,8 @@ public class RoomItemButton : MonoBehaviour
             noticeCoroutine = StartCoroutine(Notice(2f, mapKeyNotice));
             return;
         }
+
+        if (isFulled) return;
 
         RoomList.instance.JoinRoomByName(roomName); 
         RoomList.instance.ClockCursor();

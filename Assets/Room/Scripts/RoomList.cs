@@ -18,8 +18,13 @@ public class RoomList : MonoBehaviourPunCallbacks
     [Header("UI")]
     public Transform contain;
     public GameObject roomListPrefab;
+    public GameObject fullPlayerNotice;
+    public GameObject connectNotice;
+    public TextMeshProUGUI ccuCount;
 
     public List<RoomInfo> list = new List<RoomInfo>();
+    private Dictionary<string, GameObject> roomObjects =
+    new Dictionary<string, GameObject>();
 
     [Header("Create Room")]
     private string roomName = "Map1";
@@ -36,7 +41,7 @@ public class RoomList : MonoBehaviourPunCallbacks
 
         maxPlayerSet = 2;
         instance = this;
-        PhotonNetwork.AutomaticallySyncScene = true; 
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     IEnumerator Start()
@@ -70,6 +75,13 @@ public class RoomList : MonoBehaviourPunCallbacks
         {
             ChangeCursorState();
         }
+
+        if (ccuCount != null)
+        {
+            ccuCount.text = PhotonNetwork.CountOfPlayers + "/20";
+        }
+
+        CheckConnection();
     }
 
     public void ChangeCursorState()
@@ -89,6 +101,17 @@ public class RoomList : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
+        //Kiểm tra xem có vượt quá 20 CCU (Max CCU free Photon)
+        if (PhotonNetwork.CountOfPlayers > 20)
+        {
+            if (fullPlayerNotice == null) return;
+
+            Debug.Log("Server is full. Cannot join lobby.");
+            // Hiển thị thông báo cho người chơi biết server đã đầy
+            fullPlayerNotice.SetActive(true);
+            return;
+        }
+
         base.OnConnectedToMaster();
 
         Debug.Log("Connected to Sever");
@@ -99,124 +122,76 @@ public class RoomList : MonoBehaviourPunCallbacks
     {
         foreach (RoomInfo room in roomList)
         {
-            int index = list.FindIndex(x => x.Name == room.Name);
-
             if (room.RemovedFromList)
             {
-                if (index != -1)
-                    list.RemoveAt(index);
+                RemoveRoom(room);
             }
             else
             {
-                if (index != -1)
-                {
-                    list[index] = room; // update
-                }
-                else
-                {
-                    list.Add(room);
-                }
+                AddOrUpdateRoom(room);
             }
         }
-
-        UpdateUI();
     }
 
-    void UpdateUI()
+    void AddOrUpdateRoom(RoomInfo room)
     {
-        // 1. Kiểm tra xem đã gán contain và prefab trong Inspector chưa
-        if (contain == null)
+        GameObject roomObj;
+
+        if (roomObjects.TryGetValue(room.Name, out roomObj))
         {
-            Debug.LogError("LỖI: Biến 'contain' chưa được gán trong Inspector!");
-            return;
-        }
-        if (roomListPrefab == null)
-        {
-            Debug.LogError("LỖI: Biến 'roomListPrefab' chưa được gán trong Inspector!");
+            UpdateRoomObject(roomObj, room);
             return;
         }
 
-        // Xóa các room item cũ
-        foreach (Transform child in contain)
+        roomObj = Instantiate(roomListPrefab, contain);
+
+        roomObjects.Add(room.Name, roomObj);
+
+        UpdateRoomObject(roomObj, room);
+    }
+
+    void RemoveRoom(RoomInfo room)
+    {
+        if (roomObjects.TryGetValue(room.Name, out GameObject roomObj))
         {
-            Destroy(child.gameObject);
-        }
+            Destroy(roomObj);
 
-        // Tạo danh sách room mới
-        foreach (var room in list)
+            roomObjects.Remove(room.Name);
+        }
+    }
+
+    void UpdateRoomObject(GameObject roomObj, RoomInfo room)
+    {
+        RoomItemButton roomItemBtn =
+            roomObj.GetComponent<RoomItemButton>();
+
+        roomItemBtn.maxPlayer = room.MaxPlayers;
+        roomItemBtn.currentPlayer = room.PlayerCount;
+        roomItemBtn.roomName = room.Name;
+
+        string mapKey = " ";
+        if (room.CustomProperties.TryGetValue("mapKey", out object keyObj))
         {
-            GameObject _room = Instantiate(roomListPrefab, contain);
-
-            // 2. Lấy các component một lần (Tránh gọi GetComponent nhiều lần gây nặng máy)
-            RoomItemButton roomItemBtn = _room.GetComponent<RoomItemButton>();
-            Button btn = _room.GetComponent<Button>();
-            Image img = _room.GetComponent<Image>();
-
-            // 3. Kiểm tra xem Prefab có thiếu script RoomItemButton không
-            if (roomItemBtn == null)
-            {
-                Debug.LogError("LỖI: Prefab 'roomListPrefab' đang bị thiếu script RoomItemButton!");
-                continue;
-            }
-
-            // Lấy Custom Properties an toàn
-            string roomMapName = " ";
-            if (room.CustomProperties.TryGetValue("roomMapName", out object nameMapObj))
-            {
-                roomMapName = (string)nameMapObj;
-            }
-
-            string roomName = " ";
-            if (room.CustomProperties.TryGetValue("mapName", out object nameObj))
-            {
-                roomName = (string)nameObj;
-            }
-
-            // 4. Kiểm tra an toàn cho TextMeshPro con
-            if (_room.transform.childCount >= 2)
-            {
-                var textName = _room.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-                var textPlayers = _room.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-
-                if (textName != null) textName.text = roomName + " (" + roomMapName + ")";
-                if (textPlayers != null) textPlayers.text = room.PlayerCount + "/" + room.MaxPlayers;
-            }
-            else
-            {
-                Debug.LogWarning("CẢNH BÁO: Prefab không có đủ 2 object con (Child) để hiển thị Text!");
-            }
-
-            // Gán thông số cho RoomItemButton
-            roomItemBtn.maxPlayer = room.MaxPlayers;
-            roomItemBtn.currentPlayer = room.PlayerCount;
-            roomItemBtn.roomName = room.Name;
-
-            int mapIndex = 0;
-            if (room.CustomProperties.TryGetValue("mapSceneIndex", out object mapIndexObj))
-            {
-                mapIndex = (int)mapIndexObj;
-            }
-            roomItemBtn.roomIndex = mapIndex;
-
-            // Xử lý khi phòng đầy
-            if (room.PlayerCount >= room.MaxPlayers || !room.IsOpen)
-            {
-                if (btn != null) btn.interactable = false;
-                else Debug.LogWarning("CẢNH BÁO: Prefab thiếu component Button!");
-
-                if (img != null) img.color = Color.gray;
-                else Debug.LogWarning("CẢNH BÁO: Prefab thiếu component Image!");
-
-                if (roomItemBtn != null) roomItemBtn.mapKeyNotice2.SetActive(true);
-            }
-
-            string mapKey = " ";
-            if (room.CustomProperties.TryGetValue("mapKey", out object keyObj))
-            {
-                mapKey = (string)keyObj;
-            }
-            roomItemBtn.mapKey = mapKey;
+            mapKey = (string)keyObj;
         }
+        roomItemBtn.mapKey = mapKey;
+
+        string roomMapName = "";
+        if (room.CustomProperties.TryGetValue("roomMapName", out object mapObj))
+            roomMapName = mapObj.ToString();
+
+        string roomName = "";
+        if (room.CustomProperties.TryGetValue("mapName", out object nameObj))
+            roomName = nameObj.ToString();
+
+        var textName = roomObj.transform.GetChild(0)
+            .GetComponent<TextMeshProUGUI>();
+
+        var textPlayers = roomObj.transform.GetChild(1)
+            .GetComponent<TextMeshProUGUI>();
+
+        textName.text = roomName + " (" + roomMapName + ")";
+        textPlayers.text = room.PlayerCount + "/" + room.MaxPlayers;
     }
 
     public void ChangeRoomToCreate(string name)
@@ -266,7 +241,7 @@ public class RoomList : MonoBehaviourPunCallbacks
             "roomMapName"
         };
 
-        PhotonNetwork.CreateRoom(roomName, options); 
+        PhotonNetwork.CreateRoom(roomName, options);
         ClockCursor();
     }
 
@@ -338,9 +313,26 @@ public class RoomList : MonoBehaviourPunCallbacks
 
         yield return new WaitUntil(() => !PhotonNetwork.InLobby);
 
-        list.Clear();
-        UpdateUI();
+        foreach (var roomObj in roomObjects.Values)
+        {
+            Destroy(roomObj);
+        }
+
+        roomObjects.Clear();
 
         PhotonNetwork.JoinLobby();
+    }
+
+    //Check Connection
+    private void CheckConnection()
+    {
+        if (!PhotonNetwork.IsConnected)
+        {
+            connectNotice.SetActive(true);
+        }
+        else
+        {
+            connectNotice.SetActive(false);
+        }
     }
 }

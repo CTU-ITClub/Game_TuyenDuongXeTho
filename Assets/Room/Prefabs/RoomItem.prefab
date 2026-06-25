@@ -552,7 +552,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Enter Room Key...
+  m_text: "Nh\u1EADp key ph\xF2ng..."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9755c100a4aca02499ff401c702fafae, type: 2}
   m_sharedMaterial: {fileID: 4744844123009465019, guid: 9755c100a4aca02499ff401c702fafae, type: 2}
@@ -1326,7 +1326,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Name
+  m_text: 'B2404978 - B1234567
+
+    Map1'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9755c100a4aca02499ff401c702fafae, type: 2}
   m_sharedMaterial: {fileID: 4744844123009465019, guid: 9755c100a4aca02499ff401c702fafae, type: 2}
@@ -1366,7 +1368,7 @@ MonoBehaviour:
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -70
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0

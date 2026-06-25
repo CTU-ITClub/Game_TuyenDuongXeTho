@@ -43,11 +43,13 @@ public class DialogueTrigger : MonoBehaviour
 
     //NPC cuối 
     public bool isLastNPC = false;
-    public GoalManager goalManager;
     public CinemachineBrain brain;
     [Header("CheckAround")]
     private float radiusCheck = 20f;
     public bool hasXeTho = false;
+
+    //Call API dành cho NPC cuối
+    public GoogleSheetAPI googleSheetAPI;
 
     void Update()
     {
@@ -100,17 +102,18 @@ public class DialogueTrigger : MonoBehaviour
             brain != null &&
             !brain.IsBlending);
 
-        if (isLastNPC && goalManager != null)
+        if (isLastNPC && googleSheetAPI != null && PhotonNetwork.IsMasterClient)
         {
-            goalManager.Success();
+            googleSheetAPI.SendMSSV(PhotonNetwork.CurrentRoom.Name);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         PhotonView playerPV = other.GetComponent<PhotonView>();
+        if (playerPV == null) return;
 
-        if ((playerPV != null && playerPV.IsMine && other.CompareTag("Player")) || (!playerPV.IsMine && isLastNPC && other.CompareTag("Player")))
+        if ((playerPV.IsMine && other.CompareTag("Player")) || (!playerPV.IsMine && isLastNPC && other.CompareTag("Player")))
         {
             playerControl = other.GetComponent<PlayerController>();
 
@@ -147,6 +150,8 @@ public class DialogueTrigger : MonoBehaviour
                 isTalking = true;
 
                 StartConversation(playerControl);
+
+                playerControl.ChangeNotice1("");
             }
             else
             {

@@ -34,6 +34,9 @@ public class DialogueManager : MonoBehaviour
     private DialogueTrigger currentTrigger;
 
     public AudioSource audioSource;
+
+    public bool isEndDia = false;
+    //Final Scene Feature
     public AudioSource audioSourceMusic;
     public AudioClip finalMusic;
 
@@ -45,6 +48,8 @@ public class DialogueManager : MonoBehaviour
     bool canExit = false;
     bool isLockChimLac = false;
     public RoomManager roomMana;
+
+    public CallFinalEvent callFinalEvent;
 
     private void Awake()
     {
@@ -71,6 +76,8 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(Dialogue dialogue, Animator animate, CinemachineCamera cam, PlayerController player, DialogueTrigger diaTrigger)
     {
+        isEndDia = false;
+
         isDialogueActive = true;
 
         dialoguePanel.SetActive(true);
@@ -168,6 +175,8 @@ public class DialogueManager : MonoBehaviour
 
     void EndDialogue()
     {
+        isEndDia = true;
+
         if (currentTrigger.isLastNPC)
         {
             ChangeFinalCam();
@@ -207,6 +216,8 @@ public class DialogueManager : MonoBehaviour
             audioSourceMusic.clip = finalMusic;
             audioSourceMusic.Play();
         }
+
+        callFinalEvent.ChangeFinalScene();
 
         //Tắt UI
         isDialogueActive = false;

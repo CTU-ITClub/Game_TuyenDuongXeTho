@@ -5052,8 +5052,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 9755c100a4aca02499ff401c702fafae, type: 2}
-  m_sharedMaterial: {fileID: 4744844123009465019, guid: 9755c100a4aca02499ff401c702fafae, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c1d30c35606b2f84c9dddd0b68819600, type: 2}
+  m_sharedMaterial: {fileID: -8728493253638236920, guid: c1d30c35606b2f84c9dddd0b68819600, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5193,8 +5193,9 @@ MonoBehaviour:
   isTalking: 0
   notice: "NH\u1EA4N E \u0110\u1EC2 TR\xD2 CHUY\u1EC6N"
   isLastNPC: 0
-  goalManager: {fileID: 0}
   brain: {fileID: 0}
+  hasXeTho: 0
+  googleSheetAPI: {fileID: 0}
 --- !u!65 &5562259409951645831
 BoxCollider:
   m_ObjectHideFlags: 0

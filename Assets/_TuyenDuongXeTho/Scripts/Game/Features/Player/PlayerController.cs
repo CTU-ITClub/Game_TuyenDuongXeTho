@@ -101,6 +101,7 @@ namespace Game.Features.Player
         bool CountPlayer = false;
         public bool OnVehicle = false;
         public bool isDead = false;
+        public bool canControlBike = false;
 
         private void Awake()
         {
@@ -151,7 +152,7 @@ namespace Game.Features.Player
 
         private void Update()
         {
-            //CounterCheckPlayer();
+            CounterCheckPlayer();
 
             if (!pv.IsMine) return;
             if (_movementInput == null) return;
@@ -164,7 +165,7 @@ namespace Game.Features.Player
 
             _currentState?.Update();
 
-            // Left Shift để tăng lực đẩy/kéo
+            //Left Shift để tăng lực đẩy/kéo
             if (Input.GetKeyDown(KeyCode.LeftShift) && CurrentPlayerState == PushState)
             {
                 PushState._vehicle.SetBoost(true);
@@ -182,7 +183,7 @@ namespace Game.Features.Player
 
         private void FixedUpdate()
         {
-            //CounterCheckPlayer();
+            CounterCheckPlayer();
 
             if (!pv.IsMine) return;
 
@@ -420,9 +421,23 @@ namespace Game.Features.Player
             if (!CanMove) return; // Không tương tác xe khi đang ngã Ragdoll
             if (other.TryGetComponent(out IVehicleable vehicle))
             {
+                if (!canControlBike)
+                {
+                    ChangeNotice1("ĐI KIẾM TIỂU ĐỘI TRƯỞNG");
+                    return;
+                }
                 _targetVehicleSlot = vehicle;
                 if (_targetVehicleSlot.CanInteract())
                     ChangeNotice("NHẤN E");
+            }
+
+            if (other.CompareTag("TDT"))
+            {
+                DialogueTrigger dia = other.GetComponent<DialogueTrigger>();
+                if (dia.isTalking)
+                {
+                    canControlBike = true;
+                }
             }
         }
 
