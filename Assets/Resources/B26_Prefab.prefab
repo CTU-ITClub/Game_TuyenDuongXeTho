@@ -9972,7 +9972,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Plane_Boom
   boomPrefab: {fileID: 8891424833900054909, guid: f7a26a15c52691141be7d2512b78f268, type: 3}
-  boomCount: 20
+  boomCount: 25
   throwTimeDelay: 3
   areaPoints:
   - {fileID: 6659050940452851044}
@@ -9983,7 +9983,7 @@ MonoBehaviour:
   - {fileID: 6699577504917148930}
   - {fileID: 1584783262217527426}
   - {fileID: 6732283665282067084}
-  distanceEachBomb: 5
+  distanceEachBomb: 4
   plane: {fileID: 4504597774428605186}
   movePoints:
   - {fileID: 2408679404803684266}

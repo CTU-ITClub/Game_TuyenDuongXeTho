@@ -33,7 +33,7 @@ public class RoomList : MonoBehaviourPunCallbacks
 
     public bool cursorLocked = false;
 
-    void Awake()
+    void OnEnable()
     {
         //Mở cursor
         Cursor.lockState = CursorLockMode.None;
@@ -42,6 +42,16 @@ public class RoomList : MonoBehaviourPunCallbacks
         maxPlayerSet = 2;
         instance = this;
         PhotonNetwork.AutomaticallySyncScene = true;
+
+        if(fullPlayerNotice != null)
+        {
+            fullPlayerNotice.SetActive(false);
+        }
+
+        if(connectNotice != null)
+        {
+            connectNotice.SetActive(false);
+        }
     }
 
     IEnumerator Start()
@@ -101,21 +111,45 @@ public class RoomList : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        //Kiểm tra xem có vượt quá 20 CCU (Max CCU free Photon)
-        if (PhotonNetwork.CountOfPlayers > 20)
+        // Vì bản thân người này đã kết nối thành công nên đã được tính vào CountOfPlayers.
+        // Nếu CountOfPlayers > 20, nghĩa là họ là người thứ 21 trở đi.
+        if (PhotonNetwork.CountOfPlayers > 19)
         {
-            if (fullPlayerNotice == null) return;
+            Debug.LogWarning("Server đã đầy (Đạt giới hạn 20 người). Đang ngắt kết nối...");
 
-            Debug.Log("Server is full. Cannot join lobby.");
-            // Hiển thị thông báo cho người chơi biết server đã đầy
-            fullPlayerNotice.SetActive(true);
+            if (fullPlayerNotice != null)
+            {
+                fullPlayerNotice.SetActive(true);
+            }
+
+            // Chủ động ngắt kết nối client này ra để không chiếm slot ngầm và không ảnh hưởng người khác
+            PhotonNetwork.Disconnect();
             return;
         }
 
+        // Nếu hợp lệ (< 20 người), tiếp tục chạy bình thường
         base.OnConnectedToMaster();
+        Debug.Log("Connected to Server");
 
-        Debug.Log("Connected to Sever");
-        PhotonNetwork.JoinLobby();
+        if (!PhotonNetwork.InLobby)
+        {
+            PhotonNetwork.JoinLobby();
+        }
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        Debug.Log("Disconnected: " + cause);
+
+        // Trường hợp bị từ chối từ phía Server Photon do đầy gói CCU của AppID
+        if (cause == DisconnectCause.MaxCcuReached)
+        {
+            Debug.Log("Server Full (Photon Dashboard Limit)!");
+            if (fullPlayerNotice != null)
+            {
+                fullPlayerNotice.SetActive(true);
+            }
+        }
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
