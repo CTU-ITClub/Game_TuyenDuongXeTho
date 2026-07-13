@@ -36,7 +36,7 @@ namespace Photon.Pun
                 if (instance == null)
                 {
                     #if UNITY_6000_0_OR_NEWER
-                    instance = FindFirstObjectByType<PhotonHandler>();
+                    instance = FindAnyObjectByType<PhotonHandler>();
                     #else
                     instance = FindObjectOfType<PhotonHandler>();
                     #endif
@@ -112,10 +112,10 @@ namespace Photon.Pun
                 }
                 if (this.supportLoggerComponent != null)
                 {
-                    if (supportLogger.GetInstanceID() != this.supportLoggerComponent.GetInstanceID())
-                    {
-                        Debug.LogWarningFormat("Cached SupportLogger component is different from the one attached to PhotonMono GameObject");
-                    }
+                    //if (supportLogger.GetInstanceID() != this.supportLoggerComponent.GetInstanceID())
+                    //{
+                    //    Debug.LogWarningFormat("Cached SupportLogger component is different from the one attached to PhotonMono GameObject");
+                    //}
                 }
                 this.supportLoggerComponent = supportLogger;
                 this.supportLoggerComponent.Client = PhotonNetwork.NetworkingClient;
