@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -31,7 +31,6 @@ public class RoomItemButton : MonoBehaviour
 
     void Update()
     {
-        isFulled = currentPlayer >= maxPlayer;
         if (isFulled)
         {
             image.color = Color.gray;
@@ -45,6 +44,8 @@ public class RoomItemButton : MonoBehaviour
 
     public void OnClick()
     {
+        if (isFulled) return;
+
         if (maxPlayer == currentPlayer)
         {
             if (noticeCoroutine1 != null)
@@ -68,8 +69,6 @@ public class RoomItemButton : MonoBehaviour
             noticeCoroutine = StartCoroutine(Notice(2f, mapKeyNotice));
             return;
         }
-
-        if (isFulled) return;
 
         RoomList.instance.JoinRoomByName(roomName); 
         RoomList.instance.ClockCursor();
