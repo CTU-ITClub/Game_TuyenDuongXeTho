@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
@@ -21,6 +21,8 @@ public class RoomList : MonoBehaviourPunCallbacks
     public GameObject fullPlayerNotice;
     public GameObject connectNotice;
     public TextMeshProUGUI ccuCount;
+    public TextMeshProUGUI serverName;
+    public string[] serverListName;
 
     public List<RoomInfo> list = new List<RoomInfo>();
     private Dictionary<string, GameObject> roomObjects =
@@ -33,9 +35,10 @@ public class RoomList : MonoBehaviourPunCallbacks
 
     public bool cursorLocked = false;
 
-    void OnEnable()
+    public override void OnEnable()
     {
-        //Mở cursor
+        base.OnEnable();   // QUAN TRỌNG
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -43,15 +46,11 @@ public class RoomList : MonoBehaviourPunCallbacks
         instance = this;
         PhotonNetwork.AutomaticallySyncScene = true;
 
-        if(fullPlayerNotice != null)
-        {
+        if (fullPlayerNotice != null)
             fullPlayerNotice.SetActive(false);
-        }
 
-        if(connectNotice != null)
-        {
+        if (connectNotice != null)
             connectNotice.SetActive(false);
-        }
     }
 
     IEnumerator Start()
@@ -111,9 +110,18 @@ public class RoomList : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        // Vì bản thân người này đã kết nối thành công nên đã được tính vào CountOfPlayers.
+        // Check server name
+        for (int i = 0; i < serverListName.Length; i++)
+        {
+            if (PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime == serverListName[i])
+            {
+                if (i == 0) serverName.text = "Server: Siu";
+                else if (i == 1) serverName.text = "Server: Siuuuuu";
+            }
+        }
+
         // Nếu CountOfPlayers > 20, nghĩa là họ là người thứ 21 trở đi.
-        if (PhotonNetwork.CountOfPlayers > 19)
+        if (PhotonNetwork.CountOfPlayers > 20)
         {
             Debug.LogWarning("Server đã đầy (Đạt giới hạn 20 người). Đang ngắt kết nối...");
 
@@ -226,6 +234,21 @@ public class RoomList : MonoBehaviourPunCallbacks
 
         textName.text = roomName + " (" + roomMapName + ")";
         textPlayers.text = room.PlayerCount + "/" + room.MaxPlayers;
+
+        bool isStartRoom = false;
+
+        if (room.CustomProperties.TryGetValue("isStartRoom", out object value))
+        {
+            isStartRoom = (bool)value;
+        }
+
+        roomItemBtn.isFulled = isStartRoom;
+
+        if ((roomItemBtn.currentPlayer >= roomItemBtn.maxPlayer && roomItemBtn != null) || (roomItemBtn != null && roomItemBtn.isFulled))
+        {
+            roomItemBtn.mapKeyNotice2.SetActive(true);
+            roomItemBtn.isFulled = true;
+        }
     }
 
     public void ChangeRoomToCreate(string name)
@@ -264,7 +287,8 @@ public class RoomList : MonoBehaviourPunCallbacks
             {"mapSceneIndex", mapIndex},
             {"mapName", roomName},
             {"mapKey", randomKey},
-            {"roomMapName", roomMapName}
+            {"roomMapName", roomMapName},
+            {"isStartRoom", false }
         };
 
         options.CustomRoomPropertiesForLobby = new[]
@@ -272,7 +296,8 @@ public class RoomList : MonoBehaviourPunCallbacks
             "mapSceneIndex",
             "mapName",
             "mapKey",
-            "roomMapName"
+            "roomMapName",
+            "isStartRoom"
         };
 
         PhotonNetwork.CreateRoom(roomName, options);
