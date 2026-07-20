@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Photon.Pun;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -58,6 +58,23 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
         playerCountText.text = playerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
+
+        if (playerCount == 2)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+
+                Hashtable props = new Hashtable
+                {
+                    { "isStartRoom", true }
+                };
+
+                PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+
+                Debug.Log("Room locked - isStartRoom = true");
+            }
+        }
 
         // KIỂM TRA ĐỦ NGƯỜI ĐỂ SẴN SÀNG
         if (playerCount == PhotonNetwork.CurrentRoom.MaxPlayers && !ready)
@@ -161,6 +178,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
         int prefabIndex = charOrder[safeIndex];
 
         // 4. Instantiate nhân vật qua mạng (Bạn phải để Prefab trong thư mục Resources)
+        // Trường hợp out room -> vào lại
+        // Nếu có Player trong room -> lấy vị trí spawnPoint + offset của Player đó
+        // Nếu không có Player trong room -> spawnPoint mặc định
         GameObject _player = PhotonNetwork.Instantiate(player[prefabIndex].name, safeSpawnPoint.position, safeSpawnPoint.rotation);
 
         PhotonNetwork.LocalPlayer.TagObject = _player;
