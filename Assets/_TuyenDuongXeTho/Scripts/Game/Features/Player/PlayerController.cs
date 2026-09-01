@@ -152,7 +152,7 @@ namespace Game.Features.Player
 
         private void Update()
         {
-            CounterCheckPlayer();
+            //CounterCheckPlayer();
 
             if (!pv.IsMine) return;
             if (_movementInput == null) return;
@@ -183,7 +183,7 @@ namespace Game.Features.Player
 
         private void FixedUpdate()
         {
-            CounterCheckPlayer();
+            //CounterCheckPlayer();
 
             if (!pv.IsMine) return;
 

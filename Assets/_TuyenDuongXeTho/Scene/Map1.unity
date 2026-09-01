@@ -7265,7 +7265,7 @@ MonoBehaviour:
         value:
           x: -0.09555647
           y: -0.0015459617
-          z: 0.112208754
+          z: 0.11220876
           w: 0.9890783
     - Position:
         x: 272.31537
@@ -7733,7 +7733,7 @@ MonoBehaviour:
   - {fileID: 1876060740}
   - {fileID: 2095117788}
   player:
-  - {fileID: 3510951529337364477, guid: 331c2caf304a4224f8cbc64935c56d0a, type: 3}
+  - {fileID: 3836009671619073294, guid: 62c87f3d984873942a97ca5d6d975b79, type: 3}
   - {fileID: 3510951529337364477, guid: 331c2caf304a4224f8cbc64935c56d0a, type: 3}
   spawnPoint:
   - {fileID: 679188841}
