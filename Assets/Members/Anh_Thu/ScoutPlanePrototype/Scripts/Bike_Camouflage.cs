@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// Script quản lý mức ngụy trang,
-// trạng thái trú ẩn và độ bền của xe thồ.
+// Script quản lý mức ngụy trang
+// và độ bền của xe thồ.
 public class Bike_Camouflage : MonoBehaviour
 {
     [Header("Ngụy trang")]
@@ -15,33 +15,33 @@ public class Bike_Camouflage : MonoBehaviour
     public int decayAmount = 1;
     public float decayInterval = 1f;
 
-    [Header("Trú ẩn")]
-
-    public bool isInsideShelter = false;
 
     [Header("Độ bền xe")]
 
     public int maxDurability = 100;
     public int currentDurability = 100;
 
+
     private float decayTimer = 0f;
 
-    // Trả về true khi xe đủ điều kiện bị phát hiện.
+
+    // Xe có thể bị máy bay phát hiện
+    // khi mức ngụy trang thấp hơn ngưỡng phát hiện.
     public bool CanBeDetected
     {
         get
         {
-            return !isInsideShelter &&
-                   camouflage < detectionThreshold;
+            return camouflage < detectionThreshold;
         }
     }
 
+
     private void Update()
     {
-        // Cộng thời gian sau mỗi khung hình.
+        // Cộng thời gian sau mỗi frame.
         decayTimer += Time.deltaTime;
 
-        // Khi đủ thời gian, giảm ngụy trang.
+        // Khi đủ thời gian thì giảm ngụy trang.
         if (decayTimer >= decayInterval)
         {
             ReduceCamouflage();
@@ -49,7 +49,8 @@ public class Bike_Camouflage : MonoBehaviour
         }
     }
 
-    // Giảm ngụy trang theo số nguyên.
+
+    // Giảm mức ngụy trang theo thời gian.
     private void ReduceCamouflage()
     {
         if (camouflage <= 0)
@@ -58,21 +59,27 @@ public class Bike_Camouflage : MonoBehaviour
         }
 
         camouflage -= decayAmount;
-        camouflage = Mathf.Clamp(camouflage, 0, 100);
+
+        camouflage = Mathf.Clamp(
+            camouflage,
+            0,
+            100
+        );
     }
 
-    // Dùng khi người chơi đắp thêm lá.
+
+    // Dùng khi người chơi đắp thêm lá/ngụy trang.
     public void AddCamouflage(int amount)
     {
         camouflage += amount;
-        camouflage = Mathf.Clamp(camouflage, 0, 100);
+
+        camouflage = Mathf.Clamp(
+            camouflage,
+            0,
+            100
+        );
     }
 
-    // Shelter gọi hàm này khi xe đi vào hoặc đi ra.
-    public void SetInsideShelter(bool value)
-    {
-        isInsideShelter = value;
-    }
 
     // Bom gọi hàm này khi gây sát thương cho xe.
     public void TakeDamage(int damage)

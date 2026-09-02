@@ -1,95 +1,247 @@
 using UnityEngine;
 
-// Script này dùng để điều khiển máy bay bay tuần tra
-// qua các điểm Point_01, Point_02, Point_03, Point_04.
+// Script điều khiển máy bay tuần tra qua các Patrol Point.
+//
+// Đường bay:
+//
+// Point_01
+//    ↓
+// Point_02
+//    ↓
+// Point_03
+//    ↓
+// Point_04
+//    ↓
+// Point_03
+//    ↓
+// Point_02
+//    ↓
+// Point_01
+//
+// Sau đó tiếp tục lặp lại.
+//
+// Kiểu di chuyển này gọi là Ping-Pong Patrol.
 public class Plane_Patrol : MonoBehaviour
 {
-    // Danh sách các điểm mà máy bay sẽ lần lượt bay tới.
-    // Sau khi gắn script vào Plane, chúng ta sẽ kéo
-    // các Point_01...Point_04 vào mảng này trong Inspector.
+    // =========================================================
+    // PATROL POINTS
+    // =========================================================
+
+    [Header("Patrol Points")]
+
+    // Danh sách các điểm máy bay sẽ bay qua.
+    //
+    // Trong Inspector:
+    //
+    // Element 0 = Point_01
+    // Element 1 = Point_02
+    // Element 2 = Point_03
+    // Element 3 = Point_04
     public Transform[] patrolPoints;
 
-    // Tốc độ di chuyển của máy bay.
-    // Giá trị càng lớn thì máy bay bay càng nhanh.
-    public float speed = 5f;
 
-    // Tốc độ xoay của máy bay về hướng điểm tiếp theo.
-    // Giá trị càng lớn thì máy bay xoay hướng càng nhanh.
+    // =========================================================
+    // THÔNG SỐ DI CHUYỂN
+    // =========================================================
+
+    [Header("Movement")]
+
+    // Tốc độ bay của máy bay.
+    //
+    // Có thể chỉnh trực tiếp trong Inspector
+    // sau khi chạy thử gameplay.
+    public float speed = 2f;
+
+
+    // Tốc độ máy bay xoay về phía
+    // Patrol Point tiếp theo.
     public float rotationSpeed = 4f;
 
-    // Khoảng cách được xem là máy bay đã đến điểm tuần tra.
-    // Không cần máy bay chạm chính xác tuyệt đối vào điểm.
+
+    // Máy bay không cần chạm chính xác
+    // vào Patrol Point.
+    //
+    // Khi khoảng cách nhỏ hơn giá trị này
+    // thì xem như đã tới điểm.
     public float reachDistance = 0.5f;
 
-    // Chỉ số của điểm tuần tra hiện tại.
-    // 0 là Point_01, 1 là Point_02,
-    // 2 là Point_03, 3 là Point_04.
+
+    // =========================================================
+    // BIẾN NỘI BỘ
+    // =========================================================
+
+    // Patrol Point hiện tại.
+    //
+    // 0 = Point_01
+    // 1 = Point_02
+    // 2 = Point_03
+    // 3 = Point_04
     private int currentPoint = 0;
 
-    // Update được Unity gọi liên tục ở mỗi khung hình.
-    // Vì vậy phần di chuyển máy bay được đặt trong hàm này.
+
+    // Hướng đang đi trong mảng Patrol Point.
+    //
+    // 1  = đang đi:
+    // Point_01 → Point_04
+    //
+    // -1 = đang quay lại:
+    // Point_04 → Point_01
+    private int patrolDirection = 1;
+
+
+    // =========================================================
+    // UPDATE
+    // =========================================================
+
     private void Update()
     {
-        // Kiểm tra xem mảng patrolPoints đã được tạo
-        // và đã được gán ít nhất một điểm hay chưa.
-        // Nếu chưa có điểm thì dừng, tránh lỗi.
-        if (patrolPoints == null || patrolPoints.Length == 0)
+        // Nếu chưa có Patrol Point
+        // thì không làm gì.
+        if (patrolPoints == null ||
+            patrolPoints.Length == 0)
         {
             return;
         }
 
-        // Lấy điểm mà máy bay đang cần bay tới.
-        Transform targetPoint = patrolPoints[currentPoint];
 
-        // Tính hướng từ vị trí hiện tại của máy bay
-        // đến vị trí của điểm tuần tra.
+        // Đảm bảo currentPoint luôn nằm
+        // trong phạm vi hợp lệ của mảng.
+        if (currentPoint < 0 ||
+            currentPoint >= patrolPoints.Length)
+        {
+            currentPoint = 0;
+        }
+
+
+        // Lấy Patrol Point hiện tại.
+        Transform targetPoint =
+            patrolPoints[currentPoint];
+
+
+        // Nếu Element này chưa được gán
+        // thì bỏ qua để tránh NullReferenceException.
+        if (targetPoint == null)
+        {
+            MoveToNextPoint();
+            return;
+        }
+
+
+        // =====================================================
+        // 1. TÍNH HƯỚNG BAY
+        // =====================================================
+
         Vector3 direction =
-            targetPoint.position - transform.position;
+            targetPoint.position -
+            transform.position;
 
-        // Di chuyển máy bay từ vị trí hiện tại
-        // đến vị trí của điểm tuần tra.
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            targetPoint.position,
 
-            // Time.deltaTime giúp tốc độ di chuyển ổn định,
-            // không phụ thuộc máy chạy nhanh hay chậm.
-            speed * Time.deltaTime
-        );
+        // =====================================================
+        // 2. DI CHUYỂN MÁY BAY
+        // =====================================================
 
-        // Chỉ xoay máy bay khi hướng di chuyển có độ dài đủ lớn.
-        // Điều này giúp tránh lỗi khi máy bay đã ở sát điểm đích.
+        transform.position =
+            Vector3.MoveTowards(
+                transform.position,
+                targetPoint.position,
+                speed * Time.deltaTime
+            );
+
+
+        // =====================================================
+        // 3. XOAY MÁY BAY
+        // =====================================================
+
+        // Chỉ xoay khi còn cách mục tiêu
+        // một khoảng đủ lớn.
         if (direction.sqrMagnitude > 0.001f)
         {
-            // Tạo góc xoay để mặt trước của máy bay
-            // hướng về phía điểm tuần tra.
+            // Tính hướng máy bay cần quay tới.
             Quaternion targetRotation =
-                Quaternion.LookRotation(direction);
+                Quaternion.LookRotation(
+                    direction.normalized
+                );
 
-            // Xoay từ từ về hướng mới thay vì quay lập tức.
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                rotationSpeed * Time.deltaTime
-            );
+
+            // Xoay từ từ,
+            // không quay tức thời.
+            transform.rotation =
+                Quaternion.Slerp(
+                    transform.rotation,
+                    targetRotation,
+                    rotationSpeed *
+                    Time.deltaTime
+                );
         }
 
-        // Kiểm tra khoảng cách giữa máy bay và điểm hiện tại.
-        // Nếu nhỏ hơn hoặc bằng reachDistance
-        // thì xem như máy bay đã tới điểm.
-        if (Vector3.Distance(
+
+        // =====================================================
+        // 4. KIỂM TRA ĐÃ TỚI PATROL POINT CHƯA
+        // =====================================================
+
+        float distanceToTarget =
+            Vector3.Distance(
                 transform.position,
-                targetPoint.position) <= reachDistance)
-        {
-            // Chuyển sang điểm tuần tra tiếp theo.
-            currentPoint++;
+                targetPoint.position
+            );
 
-            // Nếu đã đi qua điểm cuối cùng,
-            // quay lại điểm đầu tiên để tiếp tục bay vòng.
-            if (currentPoint >= patrolPoints.Length)
-            {
-                currentPoint = 0;
-            }
+
+        if (distanceToTarget <= reachDistance)
+        {
+            MoveToNextPoint();
         }
+    }
+
+
+    // =========================================================
+    // CHUYỂN SANG PATROL POINT TIẾP THEO
+    // =========================================================
+
+    private void MoveToNextPoint()
+    {
+        // Nếu chỉ có 1 Patrol Point,
+        // máy bay không cần chuyển điểm.
+        if (patrolPoints == null ||
+            patrolPoints.Length <= 1)
+        {
+            return;
+        }
+
+
+        // =====================================================
+        // ĐANG BAY TỚI POINT CUỐI
+        // =====================================================
+
+        // Ví dụ:
+        //
+        // currentPoint = 3
+        // patrolPoints.Length = 4
+        //
+        // Nghĩa là đã tới Point_04.
+        if (currentPoint >=
+            patrolPoints.Length - 1)
+        {
+            // Đổi hướng để quay lại.
+            patrolDirection = -1;
+        }
+
+
+        // =====================================================
+        // ĐANG BAY VỀ POINT ĐẦU
+        // =====================================================
+
+        // Nếu đã tới Point_01
+        // thì đổi hướng để lại bay tới Point_04.
+        else if (currentPoint <= 0)
+        {
+            patrolDirection = 1;
+        }
+
+
+        // =====================================================
+        // CHUYỂN INDEX
+        // =====================================================
+
+        currentPoint += patrolDirection;
     }
 }
