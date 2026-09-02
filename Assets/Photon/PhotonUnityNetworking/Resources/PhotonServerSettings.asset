@@ -59,6 +59,10 @@ MonoBehaviour:
   - RPC_PlayRideSound
   - RPC_SetBoost
   - RPC_SetSoundState
+  - RPC_DestroyWorldItem
+  - RPC_EquipHandItem
+  - RPC_RequestMasterSpawn
+  - RPC_SyncSlot
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

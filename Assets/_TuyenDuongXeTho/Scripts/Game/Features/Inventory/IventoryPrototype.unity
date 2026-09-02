@@ -1981,9 +1981,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5942359667795663220, guid: 17a174f61b1f8174890b2d989780fdc1, type: 3}
-      propertyPath: quantity
-      value: 1
+    - target: {fileID: 52871988767409365, guid: 17a174f61b1f8174890b2d989780fdc1, type: 3}
+      propertyPath: sceneViewId
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7019698599180622581, guid: 17a174f61b1f8174890b2d989780fdc1, type: 3}
       propertyPath: m_LocalPosition.x

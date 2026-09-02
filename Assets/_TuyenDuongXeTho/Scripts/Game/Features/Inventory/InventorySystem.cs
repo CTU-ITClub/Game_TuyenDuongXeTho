@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun; // Thêm thư viện PUN
 
-public class InventorySystem : MonoBehaviour
+public class InventorySystem : MonoBehaviourPun // Đổi thành MonoBehaviourPun
 {
     [SerializeField] private int inventorySize = 8;
 
     [Header("Drop Settings")]
     [SerializeField] private float dropDistance = 1.2f;
-    [SerializeField] private float dropHeight = 1f;    
-    [SerializeField] private LayerMask groundLayer;  
+    [SerializeField] private float dropHeight = 1f;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float groundRaycastDistance = 3f;
-    [SerializeField] private KeyCode dropKey = KeyCode.F; 
+    [SerializeField] private KeyCode dropKey = KeyCode.F;
 
     private List<InventorySlot> _slots;
 
@@ -19,7 +20,6 @@ public class InventorySystem : MonoBehaviour
     public event Action<int> OnEquippedSlotChanged;
 
     public IReadOnlyList<InventorySlot> Slots => _slots;
-
     public int EquippedSlotIndex { get; private set; } = -1;
 
     private void Awake()
@@ -31,6 +31,9 @@ public class InventorySystem : MonoBehaviour
 
     private void Update()
     {
+        // 1. Check IsMine trước khi cho phép bấm phím Drop
+        if (!photonView.IsMine) return;
+
         if (EquippedSlotIndex >= 0 && Input.GetKeyDown(dropKey))
         {
             DropItem(EquippedSlotIndex);
@@ -43,8 +46,9 @@ public class InventorySystem : MonoBehaviour
 
         if (item.isStackable)
         {
-            foreach (var slot in _slots)
+            for (int i = 0; i < _slots.Count; i++)
             {
+                var slot = _slots[i];
                 if (slot.IsEmpty || slot.itemData != item) continue;
                 if (slot.quantity >= item.maxStackSize) continue;
 
@@ -52,6 +56,9 @@ public class InventorySystem : MonoBehaviour
                 int addAmount = Mathf.Min(space, amount);
                 slot.quantity += addAmount;
                 amount -= addAmount;
+
+                // 2. Syns cập nhật số lượng slot này cho client khác
+                photonView.RPC("RPC_SyncSlot", RpcTarget.Others, i, item.name, slot.quantity);
 
                 if (amount <= 0)
                 {
@@ -71,6 +78,9 @@ public class InventorySystem : MonoBehaviour
             slot.quantity = addAmount;
             amount -= addAmount;
 
+            // 2. Syns slot mới thêm cho client khác
+            photonView.RPC("RPC_SyncSlot", RpcTarget.Others, i, item.name, slot.quantity);
+
             if (amount <= 0)
             {
                 OnInventoryChanged?.Invoke();
@@ -80,6 +90,24 @@ public class InventorySystem : MonoBehaviour
 
         OnInventoryChanged?.Invoke();
         return amount <= 0;
+    }
+
+    // RPC để đồng bộ Inventory (Add & Clear)
+    [PunRPC]
+    private void RPC_SyncSlot(int index, string itemName, int quantity)
+    {
+        if (string.IsNullOrEmpty(itemName) || quantity <= 0)
+        {
+            _slots[index].Clear();
+        }
+        else
+        {
+            // Giả định ItemData nằm trong thư mục Resources/Items/
+            ItemData data = Resources.Load<ItemData>($"Items/{itemName}");
+            _slots[index].itemData = data;
+            _slots[index].quantity = quantity;
+        }
+        OnInventoryChanged?.Invoke();
     }
 
     public void SetEquipped(int slotIndex)
@@ -98,6 +126,9 @@ public class InventorySystem : MonoBehaviour
 
     public void DropItem(int slotIndex)
     {
+        if (photonView != null && PhotonNetwork.IsConnectedAndReady && PhotonNetwork.InRoom && !photonView.IsMine)
+            return;
+
         var slot = _slots[slotIndex];
         if (slot.IsEmpty) return;
 
@@ -105,7 +136,17 @@ public class InventorySystem : MonoBehaviour
         {
             Vector3 spawnPosition = GetDropPosition();
             Quaternion spawnRotation = Quaternion.LookRotation(transform.forward);
-            Instantiate(slot.itemData.worldPrefab, spawnPosition, spawnRotation);
+            //check online thì báo master đồng bộ
+            if (PhotonNetwork.IsConnectedAndReady && PhotonNetwork.InRoom && photonView != null)
+            {
+                photonView.RPC(nameof(RPC_RequestMasterSpawn), RpcTarget.MasterClient, slot.itemData.worldPrefab.name, spawnPosition, spawnRotation);
+            }
+            //check test editor thì chạy thẳng
+            else
+            {
+                // Test offline: Instantiate trực tiếp không qua mạng
+                Instantiate(slot.itemData.worldPrefab, spawnPosition, spawnRotation);
+            }
         }
 
         if (EquippedSlotIndex == slotIndex)
@@ -113,6 +154,16 @@ public class InventorySystem : MonoBehaviour
 
         slot.Clear();
         OnInventoryChanged?.Invoke();
+    }
+
+    [PunRPC]
+    private void RPC_RequestMasterSpawn(string prefabName, Vector3 pos, Quaternion rot)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // Cần đặt các worldPrefab vào thư mục Resources/
+            PhotonNetwork.Instantiate(prefabName, pos, rot);
+        }
     }
 
     private Vector3 GetDropPosition()
