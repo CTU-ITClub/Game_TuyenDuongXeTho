@@ -77,7 +77,7 @@ namespace Game.Features.Player
         public PlayerMoveState MoveState { get; private set; }
         public PlayerPushState PushState { get; private set; }
         public PlayerSteerState SteerState { get; private set; }
-
+        public PlayerPunchState PunchState { get; private set; }
         #endregion
 
         #region Getter Function
@@ -148,11 +148,12 @@ namespace Game.Features.Player
             MoveState = new PlayerMoveState(this);
             PushState = new PlayerPushState(this);
             SteerState = new PlayerSteerState(this);
+            PunchState = new PlayerPunchState(this);
         }
 
         private void Update()
         {
-            CounterCheckPlayer();
+            //CounterCheckPlayer();
 
             if (!pv.IsMine) return;
             if (_movementInput == null) return;
@@ -160,6 +161,8 @@ namespace Game.Features.Player
             if (!CanMove) return;
 
             HandleInput();
+
+            HandlePunchInput();
 
             HandleInteraction();
 
@@ -183,7 +186,7 @@ namespace Game.Features.Player
 
         private void FixedUpdate()
         {
-            CounterCheckPlayer();
+            //CounterCheckPlayer();
 
             if (!pv.IsMine) return;
 
@@ -210,6 +213,23 @@ namespace Game.Features.Player
                     ChangeNotice1("");
                     CountPlayer = true;
                 }
+            }
+        }
+
+        // hàm nhận input đấm
+        private void HandlePunchInput()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                // Không cho đấm khi đang đẩy/lái xe, chết...
+                if (isDead || OnVehicle)
+                    return;
+
+                // Không spam đấm khi đang Punch
+                if (_currentState == PunchState)
+                    return;
+
+                ChangeState(PunchState);
             }
         }
 

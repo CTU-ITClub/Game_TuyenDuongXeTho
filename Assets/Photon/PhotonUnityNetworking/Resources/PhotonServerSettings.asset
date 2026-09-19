@@ -23,7 +23,7 @@ MonoBehaviour:
     Server: 
     Port: 0
     ProxyServer: 
-    Protocol: 5
+    Protocol: 1
     EnableProtocolFallback: 1
     AuthMode: 0
     EnableLobbyStatistics: 0
@@ -59,6 +59,24 @@ MonoBehaviour:
   - RPC_PlayRideSound
   - RPC_SetBoost
   - RPC_SetSoundState
+  - RPC_BreakDown
+  - RPC_SyncDurability
+  - RPC_UpdateDurability
+  - RPC_DestroyWorldItem
+  - RPC_EquipHandItem
+  - RPC_RequestMasterSpawn
+  - RPC_SyncSlot
+  - RPC_Die
+  - RPC_Hit
+  - RPC_RequestDamage
+  - RPC_ChangeState
+  - RPC_ReceiveMedicalAid
+  - RPC_AddCamouflage
+  - RPC_RequestAddLeaf
+  - RPC_SyncCamouflage
+  - RPC_SyncLeaves
+  - RPC_RequestUpdateCamouflage
+  - RPC_SetCamouflageIndex
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

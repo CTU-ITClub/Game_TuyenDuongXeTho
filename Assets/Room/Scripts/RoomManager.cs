@@ -5,6 +5,13 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
+[System.Serializable]
+public class Item
+{
+    public GameObject prefab;
+    public Transform[] positions;
+}
+
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     public static RoomManager instance;
@@ -12,6 +19,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [Header("Objects")]
     public GameObject[] objs;
     public Transform[] trans;
+    public Item[] items = new Item[0];
 
     [Header("Player")]
     public GameObject[] player;
@@ -191,6 +199,16 @@ public class RoomManager : MonoBehaviourPunCallbacks
         for(int i = 0; i < objs.Length; i++)
         {
             PhotonNetwork.Instantiate(objs[i].name, trans[i].position, trans[i].rotation);
+        }
+
+        // spawn Items
+        for (int i = 0; i < items.Length; i++)
+        {
+            Transform[] positions = items[i].positions;
+            foreach (Transform pos in positions)
+            {
+                PhotonNetwork.Instantiate(items[i].prefab.name, pos.position, pos.rotation);
+            }
         }
     }
 

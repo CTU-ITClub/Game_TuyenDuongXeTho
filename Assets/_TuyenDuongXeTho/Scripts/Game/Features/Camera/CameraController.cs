@@ -102,6 +102,14 @@ namespace Game.Features.CameraSystem
             {
                 ChangeTarget();
             }
+
+
+            // Open Cursor when pressing Escape
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
         }
 
         private void LateUpdate()

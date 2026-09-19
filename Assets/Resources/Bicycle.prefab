@@ -53,8 +53,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game::Game.Features.Vehicle.VehicleController
   _motorForce: 200
+  _baseMotorForce: 1500
   _brakeForce: 50
   _maxSpeed: 10
+  _baseMaxSpeed: 20
   _maxSteerAngle: 20
   _balanceForce: 600
   _balanceDamping: 80
@@ -64,8 +66,16 @@ MonoBehaviour:
   - {fileID: 115679749541909843}
   _steerWheels:
   - {fileID: 115679749541909843}
+  _steerSmoothSpeed: 5
+  _audioSource: {fileID: 0}
+  _rideSound: {fileID: 0}
   _motorInput: 0
   _steerInput: 0
+  _stamina: 100
+  _staminaConsumptionRate: 20
+  _staminaRecoveryRate: 10
+  _staminaRegenDelay: 2
+  staminaBar: {fileID: 0}
 --- !u!114 &2970711209006164214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,6 +262,7 @@ MonoBehaviour:
   _mountPoint: {fileID: 3080903716932854402}
   _leftHandTarget: {fileID: 5285158172801057574}
   _rightHandTarget: {fileID: 3260263628532515741}
+  canvas: {fileID: 0}
 --- !u!65 &8763941621784549755
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1085,6 +1096,7 @@ MonoBehaviour:
   _mountPoint: {fileID: 7505291001301827212}
   _leftHandTarget: {fileID: 3335029530870078351}
   _rightHandTarget: {fileID: 1688816429439221337}
+  canvas: {fileID: 0}
 --- !u!65 &6866704599867427208
 BoxCollider:
   m_ObjectHideFlags: 0
